@@ -1,0 +1,841 @@
+{
+  "collection": "besoins_v1",
+  "version": 2,
+  "majLe": "2026-09-29",
+  "source": "AgriTech/Besoins_v1.docx — v2 alignée sur les 7 acteurs (acheteurs fusionnés ; banque, assurance, ONG retirées)",
+  "items": [
+    {
+      "id": "A01",
+      "ordre": 1,
+      "emoji": "👨🏾‍🌾",
+      "acteur": "Producteur",
+      "segment": "Offre",
+      "question": "Comment vendre ma production dans de bonnes conditions ?",
+      "preoccupations": [
+        {
+          "id": "A01-P01",
+          "theme": "Débouché",
+          "question": "Qui va acheter ma production ?",
+          "priorite": 1,
+          "modules": [
+            "bourse"
+          ]
+        },
+        {
+          "id": "A01-P02",
+          "theme": "Prix",
+          "question": "À combien puis-je vendre aujourd'hui ?",
+          "priorite": 1,
+          "modules": [
+            "observatoire",
+            "bourse"
+          ]
+        },
+        {
+          "id": "A01-P03",
+          "theme": "Volume",
+          "question": "Qui peut acheter 5, 10 ou 50 tonnes ?",
+          "priorite": 1,
+          "modules": [
+            "bourse",
+            "observatoire"
+          ]
+        },
+        {
+          "id": "A01-P04",
+          "theme": "Fiabilité",
+          "question": "L'acheteur va-t-il réellement payer ?",
+          "priorite": 1,
+          "modules": [
+            "finance"
+          ]
+        },
+        {
+          "id": "A01-P05",
+          "theme": "Distance",
+          "question": "Où se trouve l'acheteur ?",
+          "priorite": 2,
+          "modules": [
+            "logistique"
+          ]
+        },
+        {
+          "id": "A01-P06",
+          "theme": "Transport",
+          "question": "Qui va transporter ma production ?",
+          "priorite": 2,
+          "modules": [
+            "logistique"
+          ]
+        },
+        {
+          "id": "A01-P07",
+          "theme": "Qualité",
+          "question": "Comment prouver la qualité de ma production ?",
+          "priorite": 1,
+          "modules": [
+            "qualite"
+          ]
+        },
+        {
+          "id": "A01-P08",
+          "theme": "Paiement",
+          "question": "Quand vais-je être payé ?",
+          "priorite": 1,
+          "modules": [
+            "paiement"
+          ]
+        },
+        {
+          "id": "A01-P09",
+          "theme": "Prévision",
+          "question": "Quand dois-je vendre ?",
+          "priorite": 2,
+          "modules": [
+            "observatoire"
+          ]
+        },
+        {
+          "id": "A01-P10",
+          "theme": "Stockage",
+          "question": "Dois-je vendre maintenant ou stocker ?",
+          "priorite": 2,
+          "modules": [
+            "stockage"
+          ]
+        },
+        {
+          "id": "A01-P11",
+          "theme": "Financement",
+          "question": "Comment financer ma prochaine campagne ?",
+          "priorite": 3,
+          "modules": []
+        },
+        {
+          "id": "A01-P12",
+          "theme": "Intrants",
+          "question": "Où trouver semences, engrais, équipements ?",
+          "priorite": 3,
+          "modules": [
+            "intrants"
+          ]
+        }
+      ],
+      "majLe": "2026-09-29"
+    },
+    {
+      "id": "A02",
+      "ordre": 2,
+      "emoji": "🤝",
+      "acteur": "Coopérative",
+      "segment": "Offre",
+      "question": "Comment agréger efficacement la production de plusieurs producteurs et la vendre au meilleur débouché ?",
+      "preoccupations": [
+        {
+          "id": "A02-P01",
+          "theme": "Nombre de producteurs disponibles",
+          "question": "Combien de producteurs sont disponibles ?",
+          "priorite": 2,
+          "modules": [
+            "pilotage",
+            "bourse"
+          ]
+        },
+        {
+          "id": "A02-P02",
+          "theme": "Quantités réellement disponibles",
+          "question": "Quelles quantités sont réellement disponibles ?",
+          "priorite": 1,
+          "modules": [
+            "bourse",
+            "observatoire"
+          ]
+        },
+        {
+          "id": "A02-P03",
+          "theme": "Qualités",
+          "question": "Quelles qualités ?",
+          "priorite": 2,
+          "modules": [
+            "qualite"
+          ]
+        },
+        {
+          "id": "A02-P04",
+          "theme": "Localisation des stocks",
+          "question": "Où se trouvent les stocks ?",
+          "priorite": 2,
+          "modules": [
+            "stockage"
+          ]
+        },
+        {
+          "id": "A02-P05",
+          "theme": "Acheteur recherchant ces volumes",
+          "question": "Quel acheteur recherche ces volumes ?",
+          "priorite": 1,
+          "modules": [
+            "bourse"
+          ]
+        },
+        {
+          "id": "A02-P06",
+          "theme": "Prix à proposer",
+          "question": "Quel prix proposer ?",
+          "priorite": 2,
+          "modules": [
+            "observatoire",
+            "bourse"
+          ]
+        },
+        {
+          "id": "A02-P07",
+          "theme": "Organisation de la collecte",
+          "question": "Comment organiser la collecte ?",
+          "priorite": 2,
+          "modules": [
+            "bourse",
+            "logistique"
+          ]
+        },
+        {
+          "id": "A02-P08",
+          "theme": "Organisation du transport",
+          "question": "Comment organiser le transport ?",
+          "priorite": 2,
+          "modules": [
+            "logistique"
+          ]
+        },
+        {
+          "id": "A02-P09",
+          "theme": "Suivi des paiements",
+          "question": "Comment suivre les paiements ?",
+          "priorite": 2,
+          "modules": [
+            "paiement"
+          ]
+        },
+        {
+          "id": "A02-P10",
+          "theme": "Répartition des revenus",
+          "question": "Comment répartir les revenus ?",
+          "priorite": 2,
+          "modules": [
+            "paiement"
+          ]
+        }
+      ],
+      "majLe": "2026-09-29"
+    },
+    {
+      "id": "A03",
+      "ordre": 3,
+      "emoji": "🧑🏾‍💼",
+      "acteur": "Acheteur",
+      "segment": "Demande",
+      "question": "Où acheter suffisamment de produit, au bon prix, avec le moins de risque possible ?",
+      "exemple": "Grossiste, transformateur (ex. usine : 500 t de maïs), hôtel (tous les lundis : 100 kg de tomates + 50 kg d’oignons + 30 kg de poulet), exportateur, supermarché.",
+      "preoccupations": [
+        {
+          "id": "A03-P01",
+          "theme": "Prix dans différentes zones",
+          "priorite": 1,
+          "modules": [
+            "observatoire",
+            "bourse"
+          ]
+        },
+        {
+          "id": "A03-P02",
+          "theme": "Disponibilité réelle",
+          "priorite": 1,
+          "modules": [
+            "bourse",
+            "observatoire"
+          ]
+        },
+        {
+          "id": "A03-P03",
+          "theme": "Volumes",
+          "priorite": 1,
+          "modules": [
+            "bourse",
+            "observatoire"
+          ]
+        },
+        {
+          "id": "A03-P04",
+          "theme": "Fournisseurs",
+          "priorite": 2,
+          "modules": [
+            "bourse",
+            "finance"
+          ]
+        },
+        {
+          "id": "A03-P05",
+          "theme": "Historique du fournisseur",
+          "priorite": 2,
+          "modules": [
+            "finance"
+          ]
+        },
+        {
+          "id": "A03-P06",
+          "theme": "Qualité",
+          "priorite": 1,
+          "modules": [
+            "qualite"
+          ]
+        },
+        {
+          "id": "A03-P07",
+          "theme": "Coût du transport",
+          "priorite": 2,
+          "modules": [
+            "logistique"
+          ]
+        },
+        {
+          "id": "A03-P08",
+          "theme": "Coût rendu",
+          "priorite": 1,
+          "modules": [
+            "bourse",
+            "logistique"
+          ]
+        },
+        {
+          "id": "A03-P09",
+          "theme": "Délais",
+          "priorite": 2,
+          "modules": [
+            "logistique"
+          ]
+        },
+        {
+          "id": "A03-P10",
+          "theme": "Risque de rupture",
+          "priorite": 2,
+          "modules": [
+            "observatoire",
+            "bourse"
+          ]
+        },
+        {
+          "id": "A03-P11",
+          "theme": "Évolution des prix",
+          "priorite": 1,
+          "modules": [
+            "observatoire"
+          ]
+        },
+        {
+          "id": "A03-P12",
+          "theme": "Possibilités de revente",
+          "priorite": 3,
+          "modules": [
+            "bourse"
+          ]
+        },
+        {
+          "id": "A03-P13",
+          "theme": "Sécurité d'approvisionnement (transformateur)",
+          "priorite": 1,
+          "modules": [
+            "bourse",
+            "observatoire"
+          ]
+        },
+        {
+          "id": "A03-P14",
+          "theme": "Calendrier (transformateur)",
+          "priorite": 2,
+          "modules": [
+            "bourse",
+            "logistique"
+          ]
+        },
+        {
+          "id": "A03-P15",
+          "theme": "Contrats (transformateur)",
+          "priorite": 2,
+          "modules": [
+            "bourse",
+            "paiement"
+          ]
+        },
+        {
+          "id": "A03-P16",
+          "theme": "Prévision",
+          "priorite": 1,
+          "modules": [
+            "observatoire"
+          ]
+        },
+        {
+          "id": "A03-P17",
+          "theme": "Fournisseurs alternatifs (transformateur)",
+          "priorite": 2,
+          "modules": [
+            "bourse"
+          ]
+        },
+        {
+          "id": "A03-P18",
+          "theme": "Fraîcheur (hôtel / restaurant)",
+          "priorite": 1,
+          "modules": [
+            "qualite",
+            "logistique"
+          ]
+        },
+        {
+          "id": "A03-P19",
+          "theme": "Régularité (hôtel / restaurant)",
+          "priorite": 1,
+          "modules": [
+            "finance",
+            "bourse"
+          ]
+        },
+        {
+          "id": "A03-P20",
+          "theme": "Livraison",
+          "priorite": 2,
+          "modules": [
+            "logistique"
+          ]
+        },
+        {
+          "id": "A03-P21",
+          "theme": "Ponctualité (hôtel / restaurant)",
+          "priorite": 2,
+          "modules": [
+            "logistique"
+          ]
+        },
+        {
+          "id": "A03-P22",
+          "theme": "Commandes récurrentes (hôtel / restaurant)",
+          "priorite": 2,
+          "modules": [
+            "bourse"
+          ]
+        },
+        {
+          "id": "A03-P23",
+          "theme": "Facturation (hôtel / restaurant)",
+          "priorite": 3,
+          "modules": [
+            "paiement"
+          ]
+        },
+        {
+          "id": "A03-P24",
+          "theme": "Certification (export)",
+          "priorite": 1,
+          "modules": [
+            "qualite"
+          ]
+        },
+        {
+          "id": "A03-P25",
+          "theme": "Traçabilité (export)",
+          "priorite": 1,
+          "modules": [
+            "qualite"
+          ]
+        },
+        {
+          "id": "A03-P26",
+          "theme": "Origine (export)",
+          "priorite": 3,
+          "modules": [
+            "qualite"
+          ]
+        },
+        {
+          "id": "A03-P27",
+          "theme": "Saisonnalité",
+          "priorite": 2,
+          "modules": [
+            "observatoire"
+          ]
+        },
+        {
+          "id": "A03-P28",
+          "theme": "Documents (export)",
+          "priorite": 3,
+          "modules": [
+            "qualite",
+            "logistique"
+          ]
+        }
+      ],
+      "majLe": "2026-09-29"
+    },
+    {
+      "id": "A04",
+      "ordre": 4,
+      "emoji": "🚚",
+      "acteur": "Transporteur",
+      "segment": "Logistique",
+      "question": "Comment trouver des marchandises à transporter et éviter de rouler à vide ?",
+      "preoccupations": [
+        {
+          "id": "A04-P01",
+          "theme": "Cargaisons",
+          "priorite": 1,
+          "modules": [
+            "logistique"
+          ]
+        },
+        {
+          "id": "A04-P02",
+          "theme": "Itinéraires",
+          "priorite": 2,
+          "modules": [
+            "logistique"
+          ]
+        },
+        {
+          "id": "A04-P03",
+          "theme": "Clients",
+          "priorite": 3,
+          "modules": [
+            "bourse"
+          ]
+        },
+        {
+          "id": "A04-P04",
+          "theme": "Volumes",
+          "priorite": 1,
+          "modules": [
+            "bourse",
+            "observatoire"
+          ]
+        },
+        {
+          "id": "A04-P05",
+          "theme": "Prix du transport",
+          "priorite": 2,
+          "modules": [
+            "logistique"
+          ]
+        },
+        {
+          "id": "A04-P06",
+          "theme": "Distance",
+          "priorite": 2,
+          "modules": [
+            "logistique"
+          ]
+        },
+        {
+          "id": "A04-P07",
+          "theme": "Retour disponible",
+          "priorite": 1,
+          "modules": [
+            "logistique"
+          ]
+        },
+        {
+          "id": "A04-P08",
+          "theme": "Calendrier",
+          "priorite": 2,
+          "modules": [
+            "bourse",
+            "logistique"
+          ]
+        },
+        {
+          "id": "A04-P09",
+          "theme": "Chargement",
+          "priorite": 3,
+          "modules": [
+            "logistique"
+          ]
+        },
+        {
+          "id": "A04-P10",
+          "theme": "Déchargement",
+          "priorite": 3,
+          "modules": [
+            "logistique"
+          ]
+        },
+        {
+          "id": "A04-P11",
+          "theme": "Paiement",
+          "priorite": 1,
+          "modules": [
+            "paiement"
+          ]
+        },
+        {
+          "id": "A04-P12",
+          "theme": "Risque de litige",
+          "priorite": 2,
+          "modules": [
+            "paiement",
+            "finance"
+          ]
+        }
+      ],
+      "majLe": "2026-09-29"
+    },
+    {
+      "id": "A05",
+      "ordre": 5,
+      "emoji": "🏬",
+      "acteur": "Entrepôt",
+      "segment": "Logistique",
+      "question": "Comment remplir mon entrepôt avec des produits qui vont réellement être vendus, tout en maîtrisant le stock ?",
+      "preoccupations": [
+        {
+          "id": "A05-P01",
+          "theme": "Capacité disponible",
+          "priorite": 1,
+          "modules": [
+            "stockage"
+          ]
+        },
+        {
+          "id": "A05-P02",
+          "theme": "Stock entrant",
+          "priorite": 2,
+          "modules": [
+            "stockage"
+          ]
+        },
+        {
+          "id": "A05-P03",
+          "theme": "Stock sortant",
+          "priorite": 2,
+          "modules": [
+            "stockage"
+          ]
+        },
+        {
+          "id": "A05-P04",
+          "theme": "Durée de stockage",
+          "priorite": 2,
+          "modules": [
+            "stockage"
+          ]
+        },
+        {
+          "id": "A05-P05",
+          "theme": "Pertes",
+          "priorite": 2,
+          "modules": [
+            "stockage",
+            "finance"
+          ]
+        },
+        {
+          "id": "A05-P06",
+          "theme": "Qualité",
+          "priorite": 1,
+          "modules": [
+            "qualite"
+          ]
+        },
+        {
+          "id": "A05-P07",
+          "theme": "Température / humidité selon produit",
+          "priorite": 2,
+          "modules": [
+            "stockage"
+          ]
+        },
+        {
+          "id": "A05-P08",
+          "theme": "Coûts",
+          "priorite": 2,
+          "modules": [
+            "stockage"
+          ]
+        },
+        {
+          "id": "A05-P09",
+          "theme": "Clients",
+          "priorite": 3,
+          "modules": [
+            "bourse"
+          ]
+        },
+        {
+          "id": "A05-P10",
+          "theme": "Prévision de demande",
+          "priorite": 1,
+          "modules": [
+            "observatoire"
+          ]
+        }
+      ],
+      "majLe": "2026-09-29"
+    },
+    {
+      "id": "A06",
+      "ordre": 6,
+      "emoji": "🧑🏾‍🌾",
+      "acteur": "Collecteur",
+      "segment": "Offre",
+      "question": "Où trouver rapidement les volumes que je peux revendre ?",
+      "preoccupations": [
+        {
+          "id": "A06-P01",
+          "theme": "Producteurs",
+          "priorite": 2,
+          "modules": [
+            "bourse"
+          ]
+        },
+        {
+          "id": "A06-P02",
+          "theme": "Zones",
+          "priorite": 2,
+          "modules": [
+            "observatoire"
+          ]
+        },
+        {
+          "id": "A06-P03",
+          "theme": "Volumes",
+          "priorite": 1,
+          "modules": [
+            "bourse",
+            "observatoire"
+          ]
+        },
+        {
+          "id": "A06-P04",
+          "theme": "Prix",
+          "priorite": 1,
+          "modules": [
+            "observatoire",
+            "bourse"
+          ]
+        },
+        {
+          "id": "A06-P05",
+          "theme": "Disponibilité",
+          "priorite": 1,
+          "modules": [
+            "bourse",
+            "observatoire"
+          ]
+        },
+        {
+          "id": "A06-P06",
+          "theme": "Transport",
+          "priorite": 2,
+          "modules": [
+            "logistique"
+          ]
+        },
+        {
+          "id": "A06-P07",
+          "theme": "Acheteurs",
+          "priorite": 2,
+          "modules": [
+            "bourse"
+          ]
+        }
+      ],
+      "majLe": "2026-09-29"
+    },
+    {
+      "id": "A07",
+      "ordre": 7,
+      "emoji": "🏛️",
+      "acteur": "Institution / organisme public",
+      "segment": "Pilotage public",
+      "question": "Que se passe-t-il réellement sur les marchés agricoles ?",
+      "preoccupations": [
+        {
+          "id": "A07-P01",
+          "theme": "Évolution des prix",
+          "priorite": 1,
+          "modules": [
+            "observatoire"
+          ]
+        },
+        {
+          "id": "A07-P02",
+          "theme": "Disponibilité",
+          "priorite": 1,
+          "modules": [
+            "bourse",
+            "observatoire"
+          ]
+        },
+        {
+          "id": "A07-P03",
+          "theme": "Flux",
+          "priorite": 2,
+          "modules": [
+            "pilotage",
+            "observatoire"
+          ]
+        },
+        {
+          "id": "A07-P04",
+          "theme": "Zones déficitaires / excédentaires",
+          "priorite": 2,
+          "modules": [
+            "pilotage",
+            "observatoire"
+          ]
+        },
+        {
+          "id": "A07-P05",
+          "theme": "Volumes",
+          "priorite": 1,
+          "modules": [
+            "bourse",
+            "observatoire"
+          ]
+        },
+        {
+          "id": "A07-P06",
+          "theme": "Marchés",
+          "priorite": 3,
+          "modules": [
+            "observatoire",
+            "pilotage"
+          ]
+        },
+        {
+          "id": "A07-P07",
+          "theme": "Tendances",
+          "priorite": 2,
+          "modules": [
+            "observatoire"
+          ]
+        },
+        {
+          "id": "A07-P08",
+          "theme": "Alertes",
+          "priorite": 2,
+          "modules": [
+            "pilotage",
+            "observatoire"
+          ]
+        },
+        {
+          "id": "A07-P09",
+          "theme": "Sécurité alimentaire",
+          "priorite": 1,
+          "modules": [
+            "pilotage"
+          ]
+        }
+      ],
+      "majLe": "2026-09-29"
+    }
+  ]
+}
