@@ -20,32 +20,7 @@ export const UTILISATEURS: Utilisateur[] = [
   u('U-P01', 'Salif Ouédraogo', 'producteur', 'OHG', { langue: 'mos', inscritLe: '2025-10-14' }),
   u('U-P02', 'Awa Sawadogo', 'producteur', 'KGS', { langue: 'mos', inscritLe: '2026-01-08' }),
   u('U-P03', 'Issa Traoré', 'producteur', 'SLN', { langue: 'dyu', inscritLe: '2025-10-20' }),
-  u('U-P04', 'Paul Compaoré', 'producteur', 'BGR', { inscritLe: '2026-02-02' }),
-  u('U-P05', 'Rasmata Zida', 'producteur', 'KAY', { langue: 'mos', kyc: 'en_attente', pieces: [], inscritLe: '2026-09-25' }),
-  u('U-C01', 'Union des groupements maraîchers du Yatenga (fictive)', 'cooperative', 'OHG', { organisation: 'Union UGMY', membres: 312, pieces: ['Récépissé OHADA/SCOOPS', 'PV d’AG'], inscritLe: '2025-10-05' }),
-  u('U-C02', 'Coopérative Wend-Panga de Solenzo (fictive)', 'cooperative', 'SLN', { organisation: 'SCOOPS Wend-Panga', membres: 186, pieces: ['Récépissé OHADA/SCOOPS'], langue: 'dyu', inscritLe: '2025-10-05' }),
-  u('U-C03', 'Union des productrices de karité de la Sissili (fictive)', 'cooperative', 'LEO', { organisation: 'UPKS', membres: 540, pieces: ['Récépissé OHADA/SCOOPS', 'Certification bio (en cours)'], inscritLe: '2025-12-01' }),
-  u('U-C04', 'Coopérative rizicole de Bagré (fictive)', 'cooperative', 'BGR', { organisation: 'CRB', membres: 420, pieces: ['Récépissé OHADA/SCOOPS'], inscritLe: '2025-11-18' }),
-  u('U-C05', 'Union des producteurs de mangue du Kénédougou (fictive)', 'cooperative', 'ORD', { organisation: 'UPMK', membres: 95, pieces: ['Récépissé OHADA/SCOOPS', 'GlobalG.A.P.'], langue: 'dyu', inscritLe: '2026-01-20' }),
-  u('U-K01', 'Ets Zongo & Frères – Sankaryaré (fictif)', 'acheteur', 'OUA', { categorie: 'Grossiste / commerçant', organisation: 'Ets Zongo & Frères', pieces: ['RCCM', 'IFU'], inscritLe: '2025-10-03' }),
-  u('U-K02', 'Barro Collecte Céréales (fictif)', 'collecteur', 'BOB', { organisation: 'Barro Collecte', pieces: ['RCCM', 'IFU'], langue: 'dyu', inscritLe: '2025-10-12' }),
-  u('U-T01', 'Faso Provende SA (fictive)', 'acheteur', 'OUA', { categorie: 'Transformateur', organisation: 'Faso Provende SA', pieces: ['RCCM', 'IFU', 'Agrément sanitaire'], inscritLe: '2025-10-02' }),
-  u('U-T02', 'Mini-rizerie Nong-Taaba (fictive)', 'acheteur', 'TNK', { categorie: 'Transformateur', organisation: 'Rizerie Nong-Taaba', pieces: ['RCCM'], inscritLe: '2026-03-11' }),
-  u('U-R01', 'Hôtel Kadiogo Plaza (fictif)', 'acheteur', 'OUA', { categorie: 'Hôtel / restaurant', organisation: 'Hôtel Kadiogo Plaza', pieces: ['RCCM', 'IFU'], inscritLe: '2026-01-15' }),
-  u('U-R02', 'Restaurant Sahel Saveurs (fictif)', 'acheteur', 'OUA', { categorie: 'Hôtel / restaurant', organisation: 'Sahel Saveurs', pieces: ['RCCM'], inscritLe: '2026-04-02' }),
-  u('U-E01', 'Burkina Sésame Export SARL (fictive)', 'acheteur', 'BOB', { categorie: 'Exportateur', organisation: 'BSE SARL', pieces: ['RCCM', 'IFU', 'Agrément exportateur'], inscritLe: '2025-10-08' }),
-  u('U-E02', 'Faso Mangue Export (fictif)', 'acheteur', 'BOB', { categorie: 'Exportateur', organisation: 'Faso Mangue Export', pieces: ['RCCM', 'Agrément exportateur'], inscritLe: '2026-02-14' }),
-  u('U-D01', 'Supermarché Faso Frais – Ouaga 2000 (fictif)', 'acheteur', 'OUA', { categorie: 'Supermarché / distributeur', organisation: 'Faso Frais', pieces: ['RCCM', 'IFU'], inscritLe: '2025-12-09' }),
-  u('U-K03', 'Kaboré Collecte Sanmatenga (fictif)', 'collecteur', 'KAY', { organisation: 'Kaboré Collecte', pieces: ['CNIB', 'Carte de commerçant'], langue: 'mos', inscritLe: '2026-02-10' }),
-  u('U-TR1', 'Transports Nikiéma (fictif)', 'transporteur', 'OUA', { organisation: 'Transports Nikiéma', capaciteT: 30, pieces: ['Carte grise', 'Assurance'], inscritLe: '2025-10-18' }),
-  u('U-TR2', 'Sanou Logistique (fictif)', 'transporteur', 'BOB', { organisation: 'Sanou Logistique', capaciteT: 35, pieces: ['Carte grise', 'Assurance'], langue: 'dyu', inscritLe: '2025-11-02' }),
-  u('U-TR3', 'Tricycle Express Kaya (fictif)', 'transporteur', 'KAY', { organisation: 'Tricycle Express', capaciteT: 1.5, pieces: ['Carte grise'], langue: 'mos', inscritLe: '2026-05-06' }),
-  u('U-W01', 'Magasin de warrantage de Solenzo (fictif)', 'entrepot', 'SLN', { organisation: 'Magasin Solenzo', pieces: ['Agrément magasin'], inscritLe: '2025-10-05' }),
-  u('U-W02', 'Entrepôt céréalier de Bobo – zone industrielle (fictif)', 'entrepot', 'BOB', { organisation: 'ECB', pieces: ['RCCM'], inscritLe: '2025-10-22' }),
-  u('U-W03', 'Chambre froide maraîchère de Ouahigouya (fictive)', 'entrepot', 'OHG', { organisation: 'CFMO', pieces: ['RCCM'], inscritLe: '2026-01-10' }),
-  u('U-G01', 'Observatoire régional des marchés agricoles (fictif)', 'institution', 'OUA', { organisation: 'ORMA', pieces: [], inscritLe: '2025-10-01' }),
-  u('U-X01', 'Moussa Kaboré (nouvelle inscription)', 'acheteur', 'KDG', { categorie: 'Grossiste / commerçant', kyc: 'en_attente', pieces: ['CNIB'], inscritLe: '2026-09-27' }),
-  u('U-ADM', 'Équipe plateforme', 'admin', 'OUA', { pieces: [], inscritLe: '2025-10-01' }),
+ 
 ];
 
 // ---------------------------------------------------------------- Relevés de prix (générés, reproductibles)
@@ -77,35 +52,14 @@ export const RELEVES: RelevePrix[] = genererReleves();
 export const OFFRES: Offre[] = [
   { id: 'OF-1001', vendeurId: 'U-C02', produitId: 'mais', quantiteKg: 120_000, quantiteRestanteKg: 120_000, prixKg: 225, qualite: 'A', localiteId: 'SLN', disponibleLe: '2026-10-10', description: 'Maïs jaune nouvelle récolte, séché < 13 % d’humidité, en sacs de 100 kg.', lot: 'BF-SLN-MAI-2610-01', producteurs: 64, entrepotId: 'EN-SLN', livraison: false, statut: 'active', creeLe: '2026-09-20' },
   { id: 'OF-1002', vendeurId: 'U-P03', produitId: 'sesame', quantiteKg: 4_000, quantiteRestanteKg: 4_000, prixKg: 700, qualite: 'B', localiteId: 'SLN', disponibleLe: '2026-10-25', description: 'Sésame blanc, nettoyé au tamis.', lot: 'BF-SLN-SES-2610-02', livraison: false, statut: 'active', creeLe: '2026-09-22' },
-  { id: 'OF-1003', vendeurId: 'U-C01', produitId: 'oignon', quantiteKg: 40_000, quantiteRestanteKg: 32_000, prixKg: 330, qualite: 'A', localiteId: 'OHG', disponibleLe: '2026-09-30', description: 'Violet de Galmi conservé en case ventilée, calibre moyen, sacs filets de 80 kg.', lot: 'BF-OHG-OIG-2604-07', producteurs: 41, livraison: true, statut: 'active', creeLe: '2026-09-15' },
-  { id: 'OF-1004', vendeurId: 'U-P01', produitId: 'oignon', quantiteKg: 3_200, quantiteRestanteKg: 3_200, prixKg: 320, qualite: 'B', localiteId: 'OHG', disponibleLe: '2026-09-30', description: '40 filets, conservation traditionnelle.', lot: 'BF-OHG-OIG-2604-11', livraison: false, statut: 'active', creeLe: '2026-09-26' },
-  { id: 'OF-1005', vendeurId: 'U-C04', produitId: 'riz', quantiteKg: 60_000, quantiteRestanteKg: 60_000, prixKg: 490, qualite: 'A', localiteId: 'BGR', disponibleLe: '2026-10-05', description: 'Riz étuvé par les étuveuses de la coopérative, sacs de 50 kg, tri manuel.', lot: 'BF-BGR-RIZ-2609-03', producteurs: 118, livraison: true, statut: 'active', creeLe: '2026-09-18' },
-  { id: 'OF-1006', vendeurId: 'U-C03', produitId: 'karite', quantiteKg: 85_000, quantiteRestanteKg: 85_000, prixKg: 180, qualite: 'A', localiteId: 'LEO', disponibleLe: '2026-10-01', description: 'Amandes séchées, taux d’acidité contrôlé, collectées par 212 femmes.', lot: 'BF-LEO-KAR-2608-01', producteurs: 212, certification: 'Bio (en cours)', livraison: false, statut: 'active', creeLe: '2026-09-10' },
-  { id: 'OF-1007', vendeurId: 'U-K02', produitId: 'mais', quantiteKg: 90_000, quantiteRestanteKg: 90_000, prixKg: 240, qualite: 'A', localiteId: 'BOB', disponibleLe: '2026-10-03', description: 'Maïs blanc et jaune, stock en entrepôt à Bobo.', lot: 'BF-BOB-MAI-2609-05', entrepotId: 'EN-BOB', livraison: true, statut: 'active', creeLe: '2026-09-21' },
-  { id: 'OF-1008', vendeurId: 'U-K02', produitId: 'soja', quantiteKg: 30_000, quantiteRestanteKg: 30_000, prixKg: 290, qualite: 'B', localiteId: 'BOB', disponibleLe: '2026-10-12', description: 'Soja grain, campagne 2025.', lot: 'BF-BOB-SOJ-2609-02', entrepotId: 'EN-BOB', livraison: true, statut: 'active', creeLe: '2026-09-23' },
-  { id: 'OF-1009', vendeurId: 'U-P02', produitId: 'tomate', quantiteKg: 1_500, quantiteRestanteKg: 1_500, prixKg: 340, qualite: 'A', localiteId: 'KGS', disponibleLe: '2026-09-30', description: 'Tomate de contre-saison irriguée (lac Bam), 60 caisses.', lot: 'BF-KGS-TOM-2609-09', livraison: false, statut: 'active', creeLe: '2026-09-27' },
-  { id: 'OF-1010', vendeurId: 'U-P04', produitId: 'riz', quantiteKg: 5_000, quantiteRestanteKg: 5_000, prixKg: 470, qualite: 'B', localiteId: 'BGR', disponibleLe: '2026-10-02', description: '100 sacs de 50 kg.', lot: 'BF-BGR-RIZ-2609-12', livraison: false, statut: 'active', creeLe: '2026-09-24' },
-  { id: 'OF-1011', vendeurId: 'U-C02', produitId: 'niebe', quantiteKg: 18_000, quantiteRestanteKg: 18_000, prixKg: 520, qualite: 'A', localiteId: 'SLN', disponibleLe: '2026-10-20', description: 'Niébé blanc variété Komcallé, stocké en sacs triple fond.', lot: 'BF-SLN-NIE-2610-03', producteurs: 27, entrepotId: 'EN-SLN', livraison: false, statut: 'active', creeLe: '2026-09-25' },
-  { id: 'OF-1012', vendeurId: 'U-C01', produitId: 'pdt', quantiteKg: 12_000, quantiteRestanteKg: 12_000, prixKg: 400, qualite: 'A', localiteId: 'OHG', disponibleLe: '2026-09-30', description: 'Pomme de terre en chambre froide, sacs de 50 kg.', lot: 'BF-OHG-PDT-2603-04', producteurs: 19, entrepotId: 'EN-OHG', livraison: true, statut: 'active', creeLe: '2026-09-12' },
-  { id: 'OF-1014', vendeurId: 'U-P05', produitId: 'niebe', quantiteKg: 1_500, quantiteRestanteKg: 1_500, prixKg: 450, qualite: 'B', localiteId: 'KAY', disponibleLe: '2026-10-02', description: '15 sacs de niébé, récolte de la semaine.', lot: 'BF-KAY-NIE-2609-21', livraison: false, statut: 'active', creeLe: '2026-09-28' },
-  { id: 'OF-1015', vendeurId: 'U-P01', produitId: 'mil', quantiteKg: 2_000, quantiteRestanteKg: 2_000, prixKg: 280, qualite: 'B', localiteId: 'OHG', disponibleLe: '2026-10-05', description: '20 sacs de mil local.', lot: 'BF-OHG-MIL-2609-14', livraison: false, statut: 'active', creeLe: '2026-09-27' },
-  { id: 'OF-1016', vendeurId: 'U-P02', produitId: 'oignon', quantiteKg: 2_400, quantiteRestanteKg: 2_400, prixKg: 300, qualite: 'A', localiteId: 'KGS', disponibleLe: '2026-09-30', description: '30 filets, conservés en case.', lot: 'BF-KGS-OIG-2604-19', livraison: false, statut: 'active', creeLe: '2026-09-26' },
-  { id: 'OF-1013', vendeurId: 'U-P03', produitId: 'mais', quantiteKg: 8_000, quantiteRestanteKg: 0, prixKg: 230, qualite: 'B', localiteId: 'SLN', disponibleLe: '2026-09-15', description: '80 sacs.', lot: 'BF-SLN-MAI-2609-08', livraison: false, statut: 'epuisee', creeLe: '2026-09-05' },
-];
+  ];
 
 // ---------------------------------------------------------------- Demandes (RFQ & appels d'offres)
 
 export const DEMANDES: Demande[] = [
   { id: 'DM-2001', acheteurId: 'U-T01', produitId: 'mais', quantiteKg: 300_000, prixMaxKg: 275, qualiteMin: 'A', localiteLivraisonId: 'OUA', dateLimite: '2026-10-31', recurrence: 'Contrat trimestriel', type: 'rfq', description: 'Maïs jaune pour aliment volaille. Humidité < 14 %, aflatoxines contrôlées. Livraison usine Kossodo.', statut: 'ouverte', creeLe: '2026-09-16' },
-  { id: 'DM-2002', acheteurId: 'U-R01', produitId: 'tomate', quantiteKg: 120, prixMaxKg: 650, qualiteMin: 'A', localiteLivraisonId: 'OUA', dateLimite: '2026-10-05', recurrence: 'Tous les lundis', type: 'rfq', description: '120 kg de tomates fermes + facture chaque semaine.', statut: 'ouverte', creeLe: '2026-09-24' },
-  { id: 'DM-2003', acheteurId: 'U-R01', produitId: 'oignon', quantiteKg: 60, prixMaxKg: 550, qualiteMin: 'A', localiteLivraisonId: 'OUA', dateLimite: '2026-10-05', recurrence: 'Tous les lundis', type: 'rfq', description: 'Oignon violet, calibre moyen.', statut: 'ouverte', creeLe: '2026-09-24' },
   { id: 'DM-2004', acheteurId: 'U-E01', produitId: 'sesame', quantiteKg: 200_000, prixMaxKg: 790, qualiteMin: 'A', localiteLivraisonId: 'BOB', dateLimite: '2026-11-30', type: 'rfq', description: 'Sésame blanc, pureté ≥ 99 %, traçabilité par lot exigée (export).', statut: 'ouverte', creeLe: '2026-09-19' },
-  { id: 'DM-2005', acheteurId: 'U-K01', produitId: 'sorgho', quantiteKg: 250_000, prixMaxKg: 300, qualiteMin: 'B', localiteLivraisonId: 'KAY', dateLimite: '2026-11-15', type: 'appel_offres', description: 'Appel d’offres : sorgho blanc livré au dépôt de Kaya. Priorité aux coopératives. Lots de 50 t acceptés.', statut: 'ouverte', creeLe: '2026-09-12' },
-  { id: 'DM-2006', acheteurId: 'U-D01', produitId: 'riz', quantiteKg: 10_000, prixMaxKg: 560, qualiteMin: 'A', localiteLivraisonId: 'OUA', dateLimite: '2026-10-15', recurrence: 'Mensuel', type: 'rfq', description: 'Riz local étuvé en sacs de 25 kg (conditionnement rayon).', statut: 'ouverte', creeLe: '2026-09-20' },
-  { id: 'DM-2007', acheteurId: 'U-T02', produitId: 'riz', quantiteKg: 40_000, prixMaxKg: 520, qualiteMin: 'B', localiteLivraisonId: 'TNK', dateLimite: '2026-10-20', type: 'rfq', description: 'Paddy/étuvé pour décorticage.', statut: 'ouverte', creeLe: '2026-09-22' },
-  { id: 'DM-2008', acheteurId: 'U-K01', produitId: 'niebe', quantiteKg: 25_000, prixMaxKg: 600, qualiteMin: 'B', localiteLivraisonId: 'OUA', dateLimite: '2026-10-30', type: 'rfq', description: 'Niébé pour revente Sankaryaré.', statut: 'ouverte', creeLe: '2026-09-26' },
-  { id: 'DM-2009', acheteurId: 'U-K01', produitId: 'mais', quantiteKg: 30_000, prixMaxKg: 290, qualiteMin: 'B', localiteLivraisonId: 'OUA', dateLimite: '2026-09-20', type: 'rfq', description: 'Maïs blanc.', statut: 'attribuee', creeLe: '2026-09-02' },
-];
+  ];
 
 export const COTATIONS: Cotation[] = [
   { id: 'CT-3001', demandeId: 'DM-2001', vendeurId: 'U-C02', prixKg: 228, quantiteKg: 120_000, localiteId: 'SLN', delaiJours: 12, message: 'Lot BF-SLN-MAI-2610-01 disponible au magasin de Solenzo. Analyse humidité jointe.', statut: 'envoyee', creeLe: '2026-09-21' },
@@ -165,13 +119,7 @@ export const COMMANDES: Commande[] = [
 
 export const FRETS: Fret[] = [
   { id: 'FR-5001', demandeurId: 'U-C02', origineId: 'SLN', destinationId: 'OUA', produitId: 'mais', tonnage: 30, dateChargement: '2026-10-12', prixPropose: 900_000, statut: 'ouvert', candidatures: [{ transporteurId: 'U-TR2', prix: 950_000, message: 'Camion 35 t disponible à Bobo le 11/10.', date: '2026-09-27' }], creeLe: '2026-09-26' },
-  { id: 'FR-5002', demandeurId: 'U-C01', origineId: 'OHG', destinationId: 'OUA', produitId: 'oignon', tonnage: 8, dateChargement: '2026-09-30', prixPropose: 180_000, statut: 'ouvert', candidatures: [], creeLe: '2026-09-28' },
-  { id: 'FR-5003', demandeurId: 'U-C04', origineId: 'BGR', destinationId: 'OUA', produitId: 'riz', tonnage: 10, dateChargement: '2026-10-06', prixPropose: 230_000, statut: 'ouvert', candidatures: [], creeLe: '2026-09-25' },
-  { id: 'FR-5004', demandeurId: 'U-C03', origineId: 'LEO', destinationId: 'BOB', produitId: 'karite', tonnage: 25, dateChargement: '2026-10-03', prixPropose: 720_000, statut: 'attribue', transporteurId: 'U-TR2', candidatures: [{ transporteurId: 'U-TR2', prix: 720_000, message: 'OK', date: '2026-09-20' }], creeLe: '2026-09-18' },
-  { id: 'FR-5005', demandeurId: 'U-T01', origineId: 'OUA', destinationId: 'BOB', produitId: 'mais', tonnage: 25, dateChargement: '2026-10-11', prixPropose: 600_000, statut: 'ouvert', candidatures: [], creeLe: '2026-09-28' },
-  { id: 'FR-5006', demandeurId: 'U-K01', commandeId: 'CM-4001', origineId: 'SLN', destinationId: 'OUA', produitId: 'mais', tonnage: 8, dateChargement: '2026-09-10', prixPropose: 240_000, statut: 'livre', transporteurId: 'U-TR1', candidatures: [], creeLe: '2026-09-07' },
-  { id: 'FR-5007', demandeurId: 'U-P05', origineId: 'KAY', destinationId: 'OUA', produitId: 'niebe', tonnage: 1.2, dateChargement: '2026-10-02', prixPropose: 35_000, statut: 'ouvert', candidatures: [], creeLe: '2026-09-28' },
-];
+ ];
 
 export const AXES: SignalementAxe[] = [
   { id: 'AX-1', origineId: 'SLN', destinationId: 'DED', niveau: 'prudence', motif: 'Route dégradée', commentaire: 'Nids de poule importants après les pluies, prévoir +1 h.', date: '2026-09-24', auteurId: 'U-TR2', confirmations: 6 },
@@ -191,16 +139,8 @@ export const ENTREPOTS: Entrepot[] = [
 
 export const DEPOTS: Depot[] = [
   { id: 'DP-6001', entrepotId: 'EN-SLN', deposantId: 'U-C02', produitId: 'mais', quantiteKg: 120_000, dateEntree: '2026-09-18', qualite: 'A', statut: 'en_stock', recu: 'RS-SLN-2026-118' },
-  { id: 'DP-6002', entrepotId: 'EN-SLN', deposantId: 'U-C02', produitId: 'niebe', quantiteKg: 18_000, dateEntree: '2026-09-22', qualite: 'A', statut: 'en_stock', recu: 'RS-SLN-2026-121' },
-  { id: 'DP-6003', entrepotId: 'EN-SLN', deposantId: 'U-P03', produitId: 'sesame', quantiteKg: 4_000, dateEntree: '2026-09-15', qualite: 'B', statut: 'en_stock', recu: 'RS-SLN-2026-112' },
-  { id: 'DP-6004', entrepotId: 'EN-BOB', deposantId: 'U-K02', produitId: 'mais', quantiteKg: 90_000, dateEntree: '2026-08-30', qualite: 'A', statut: 'en_stock', recu: 'RS-BOB-2026-341' },
-  { id: 'DP-6005', entrepotId: 'EN-BOB', deposantId: 'U-K02', produitId: 'soja', quantiteKg: 30_000, dateEntree: '2026-09-05', qualite: 'B', statut: 'en_stock', recu: 'RS-BOB-2026-352' },
-  { id: 'DP-6006', entrepotId: 'EN-BOB', deposantId: 'U-E01', produitId: 'sesame', quantiteKg: 140_000, dateEntree: '2026-06-02', qualite: 'A', statut: 'en_stock', recu: 'RS-BOB-2026-198' },
-  { id: 'DP-6008', entrepotId: 'EN-BOB', deposantId: 'U-C02', produitId: 'mais', quantiteKg: 60_000, dateEntree: '2026-03-02', qualite: 'A', statut: 'retire', recu: 'RS-BOB-2026-077', dateSortie: '2026-07-10' },
-  { id: 'DP-6009', entrepotId: 'EN-BOB', deposantId: 'U-K02', produitId: 'sorgho', quantiteKg: 45_000, dateEntree: '2026-02-12', qualite: 'B', statut: 'retire', recu: 'RS-BOB-2026-061', dateSortie: '2026-06-25' },
-  { id: 'DP-6010', entrepotId: 'EN-BOB', deposantId: 'U-K02', produitId: 'arachide', quantiteKg: 22_000, dateEntree: '2026-01-20', qualite: 'B', statut: 'en_stock', recu: 'RS-BOB-2026-038' },
-  { id: 'DP-6007', entrepotId: 'EN-OHG', deposantId: 'U-C01', produitId: 'pdt', quantiteKg: 12_000, dateEntree: '2026-08-20', qualite: 'A', statut: 'en_stock', recu: 'RS-OHG-2026-044' },
-];
+   { id: 'DP-6003', entrepotId: 'EN-SLN', deposantId: 'U-P03', produitId: 'sesame', quantiteKg: 4_000, dateEntree: '2026-09-15', qualite: 'B', statut: 'en_stock', recu: 'RS-SLN-2026-112' },
+ ];
 
 // ---------------------------------------------------------------- Coopératives
 

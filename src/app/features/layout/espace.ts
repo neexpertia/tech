@@ -12,8 +12,8 @@ import { LIBELLE_ROLE, SessionService } from '../../core/session.service';
   @let moi = session.utilisateur()!;
   <div class="shell" [class.open]="menuOuvert()">
     <aside>
-      <a class="brand" routerLink="/"><span class="logo">🌾</span><div><strong>FasoAgri</strong><div class="small muted">Marchés agricoles · Burkina Faso</div></div></a>
-      <div class="espace"><span class="em">{{ config().emoji }}</span><div><strong>{{ config().espace }}</strong><div class="small muted">{{ config().accroche }}</div></div></div>
+      <a class="brand" routerLink="/"><span class="logo">🌾</span><div><strong>FasoAgri</strong><div class="small muted">Marchés agricoles · BF</div></div></a>
+
       <nav>
         @for (g of config().menu; track g.titre) {
           <div class="gt">{{ g.titre }}</div>

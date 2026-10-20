@@ -33,7 +33,7 @@ import { SessionService } from '../../core/session.service';
   <footer>
     <div class="in grille">
       <div><strong>🌾 FasoAgri</strong><p class="small">La place de marché agricole du Burkina Faso : prix, ventes, transport, stockage et financement.</p></div>
-      <div><strong>Découvrir</strong><a routerLink="/decouvrir/prix">Prix des marchés</a><a routerLink="/decouvrir/marche">Offres disponibles</a><a routerLink="/decouvrir/observatoire">Observatoire des marchés</a><a routerLink="/" fragment="acteurs">Pour chaque acteur</a></div>
+    
       <div><strong>Accès</strong><a routerLink="/inscription">Créer un compte</a><a routerLink="/connexion">Se connecter</a><span class="small">Sans internet : code USSD *000# (démo)</span></div>
       <div><strong>Contact</strong><span class="small">Assistance : +226 •• •• •• ••</span><span class="small">Prototype — données fictives</span></div>
     </div>
