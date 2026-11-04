@@ -67,6 +67,18 @@ export class AchatService {
     return true;
   }
 
+  // ================================================================ MASQUER
+
+  /** Offres masquées par l'utilisateur : retirées de l'accueil, du marché et des suggestions. */
+  readonly idsMasques = computed(() => new Set(this.db.masques.items().filter((m) => m.userId === this.moiId()).map((m) => m.offreId)));
+  estMasque(offreId: string) { return this.idsMasques().has(offreId); }
+  async masquer(offreId: string) {
+    if (!this.estMasque(offreId)) await this.db.masques.create({ userId: this.moi, offreId, creeLe: aujourdhui() });
+  }
+  async demasquer(offreId: string) {
+    for (const m of this.db.masques.items().filter((m) => m.userId === this.moi && m.offreId === offreId)) await this.db.masques.remove(m.id);
+  }
+
   // ================================================================ PANIER
 
   readonly panier = computed(() => {
@@ -102,7 +114,7 @@ export class AchatService {
   /** Offres visibles du même produit, triées par coût rendu à destination. */
   alternatives(produitId: string, destinationId: string, exclure?: string, n = 3) {
     return this.db.offres.items()
-      .filter((o) => o.produitId === produitId && o.id !== exclure && offreVisible(o) && o.vendeurId !== this.moiId())
+      .filter((o) => o.produitId === produitId && o.id !== exclure && offreVisible(o) && o.vendeurId !== this.moiId() && !this.idsMasques().has(o.id))
       .map((o) => ({ o, rendu: this.pf.coutRendu(o.prixKg, o.produitId, o.localiteId, destinationId).total, fraicheur: fraicheur(o) }))
       .sort((a, b) => a.rendu - b.rendu)
       .slice(0, n);

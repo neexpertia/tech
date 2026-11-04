@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { LOCALITES, PRODUITS, REGIONS, localite, produit } from '../../core/data/referentiel';
 import { PlateformeService, fraicheur, offreVisible } from '../../core/plateforme.service';
+import { AchatService } from '../../core/achat.service';
 import { ACHAT_UI, visuel } from '../../shared/achat-ui';
 import { SessionService } from '../../core/session.service';
 import { UI } from '../../shared/ui';
@@ -24,6 +25,7 @@ import { UI } from '../../shared/ui';
       <select aria-label="Qualité" [ngModel]="qualite()" (ngModelChange)="qualite.set($event)"><option value="">Toute qualité</option><option value="A">Premier choix</option><option value="B">Bonne qualité ou mieux</option></select>
       <select aria-label="Trier" [ngModel]="tri()" (ngModelChange)="tri.set($event)"><option value="rendu">Moins cher livré</option><option value="prix">Moins cher sur place</option><option value="recent">Plus récents</option><option value="qte">Plus grande quantité</option></select>
       @if (session.estVendeur()) { <label class="coche"><input type="checkbox" [ngModel]="miennes()" (ngModelChange)="miennes.set($event)" /> Mes offres</label> }
+      @if (nbMasques()) { <label class="coche"><input type="checkbox" [ngModel]="voirMasques()" (ngModelChange)="voirMasques.set($event)" /> Produits masqués ({{ nbMasques() }})</label> }
     </div>
     <div class="chips cats" role="group" aria-label="Produits">
       <button class="chip" [class.on]="!produitId()" (click)="produitId.set('')">Tout</button>
@@ -61,6 +63,10 @@ export class MarchePage {
   protected readonly tri = signal<'rendu' | 'prix' | 'recent' | 'qte'>('rendu');
   protected readonly miennes = signal(false);
   protected readonly confirmees = signal(false);
+  /** Afficher uniquement les produits que j'ai masqués (pour les faire réapparaître) */
+  protected readonly voirMasques = signal(false);
+  private readonly achat = inject(AchatService);
+  protected readonly nbMasques = computed(() => this.achat.idsMasques().size);
   /** ?produit=mais pré-filtre le marché (liens des actualités, alertes, offres équivalentes). */
   readonly produit = input<string>();
   /** ?q=… recherche depuis l'accueil */
@@ -86,6 +92,7 @@ export class MarchePage {
     const l = this.pf.db.offres.items()
       .filter((o) => (this.miennes() ? o.vendeurId === moi : offreVisible(o)))
       .filter((o) => this.miennes() || !this.confirmees() || fraicheur(o).niveau === 'confirme')
+      .filter((o) => this.miennes() || this.voirMasques() === this.achat.idsMasques().has(o.id))
       .filter((o) => !this.produitId() || o.produitId === this.produitId())
       .filter((o) => !this.regionId() || localite(o.localiteId).regionId === this.regionId())
       .filter((o) => !this.qualite() || o.qualite <= this.qualite())

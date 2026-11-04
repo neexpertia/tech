@@ -329,6 +329,9 @@ export interface Notification { id: ID; userId: ID; date: DateISO; texte: string
 
 // ---------------------------------------------------------------- Espace acheteur
 
+/** Produit que l'utilisateur ne veut plus voir dans ses listes */
+export interface Masque { id: ID; userId: ID; offreId: ID; creeLe: DateISO }
+
 export interface Favori { id: ID; userId: ID; offreId: ID; prixKgAjout: number; creeLe: DateISO }
 
 /** Alerte produit : « préviens-moi quand une offre correspond ». */

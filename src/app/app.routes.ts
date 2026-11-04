@@ -7,10 +7,14 @@ import { EspaceLayout } from './features/layout/espace';
 import { PublicLayout } from './features/layout/public';
 
 /** Espace connecté : session requise, puis rôle autorisé pour la rubrique (data.acces). */
-const acces: CanActivateFn = (route: ActivatedRouteSnapshot) => {
+const acces: CanActivateFn = (route: ActivatedRouteSnapshot, state) => {
   const session = inject(SessionService);
   const router = inject(Router);
-  if (!session.utilisateur()) return router.parseUrl('/connexion');
+  if (!session.utilisateur()) {
+    // Lien partagé : on y revient après la connexion
+    try { sessionStorage.setItem('agri-bf.retour', state.url); } catch { /* ignore */ }
+    return router.parseUrl('/connexion');
+  }
   const cle = route.data['acces'] as string | undefined;
   const roles = cle ? ACCES[cle] : undefined;
   if (!roles || session.a(...roles)) return true;
@@ -29,8 +33,8 @@ export const routes: Routes = [
     children: [
       { path: '', pathMatch: 'full', title: 'FasoAgri — marchés agricoles du Burkina Faso', loadComponent: () => import('./features/public/landing').then((m) => m.LandingPage) },
       // Prix, offres et observatoire : réservés aux membres connectés
-      { path: 'decouvrir/marche/:id', redirectTo: 'marche/:id' },
-      { path: 'decouvrir/:page', redirectTo: 'connexion' },
+      { path: 'decouvrir/marche/:id', redirectTo: '/marche/:id' },
+      { path: 'decouvrir/:page', redirectTo: '/connexion' },
       { path: 'connexion', title: p('Connexion'), loadComponent: () => import('./features/connexion').then((m) => m.ConnexionPage) },
       { path: 'inscription', title: p('Créer un compte'), loadComponent: () => import('./features/public/inscription').then((m) => m.InscriptionPage) },
     ],

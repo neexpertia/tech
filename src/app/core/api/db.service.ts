@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import * as S from '../data/seed';
 import {
-  Actualite, AlerteProduit, Conversation, Favori, LignePanier,
+  Actualite, AlerteProduit, Conversation, Favori, LignePanier, Masque,
   Apport, Avis, Collecte, DisponibiliteCamion, Commande, Cotation, Demande, Depot, Entrepot, Fret, Lot,
   Notification, Offre, RelevePrix, SignalementAxe, Utilisateur,
 } from '../models';
@@ -44,6 +44,7 @@ export class DbService {
   // Espace acheteur
   readonly conversations = this.repo<Conversation>('conversations', S.CONVERSATIONS, 'CV');
   readonly favoris = this.repo<Favori>('favoris', S.FAVORIS, 'FV');
+  readonly masques = this.repo<Masque>('masques', [], 'MQ');
   readonly alertes = this.repo<AlerteProduit>('alertes-produits', S.ALERTES, 'AL');
   readonly panier = this.repo<LignePanier>('panier', S.PANIER, 'PN');
   readonly actualites = this.repo<Actualite>('actualites', S.ACTUALITES, 'AC');

@@ -29,7 +29,7 @@ import { UI } from '../../shared/ui';
             @if (avisProduit().length) { <span class="badge">★ {{ noteProduit() | nb: 1 }} ({{ avisProduit().length }} avis)</span> }
           </div>
         </div>
-        @if (session.utilisateur() && !estVendeur()) { <app-coeur [offre]="o" /> }
+        @if (session.utilisateur() && !estVendeur()) { <app-actions-offre [offre]="o" /> }
       </div>
 
       <div class="split">

@@ -172,7 +172,7 @@ export class AccueilAcheteurPage {
     return t.slice(0, 3);
   });
 
-  private readonly visibles = computed(() => this.pf.db.offres.items().filter((o) => offreVisible(o) && fraicheur(o).niveau !== 'a_reconfirmer' && o.vendeurId !== this.session.utilisateur()?.id));
+  private readonly visibles = computed(() => this.pf.db.offres.items().filter((o) => offreVisible(o) && fraicheur(o).niveau !== 'a_reconfirmer' && o.vendeurId !== this.session.utilisateur()?.id && !this.achat.idsMasques().has(o.id)));
 
   /** Offres sous le prix habituel du marché, les plus fortes remises d'abord */
   protected readonly affaires = computed(() => this.visibles()

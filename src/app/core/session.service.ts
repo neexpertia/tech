@@ -66,7 +66,9 @@ export class SessionService {
     this.modeBrut.set('achat');
     try { localStorage.setItem(CLE_MODE, 'achat'); } catch { /* ignore */ }
     try { localStorage.setItem(CLE, id); } catch { /* ignore */ }
-    this.router.navigateByUrl('/accueil');
+    let retour: string | null = null;
+    try { retour = sessionStorage.getItem('agri-bf.retour'); sessionStorage.removeItem('agri-bf.retour'); } catch { /* ignore */ }
+    this.router.navigateByUrl(retour || '/accueil');
   }
 
   deconnecter() {
