@@ -20,6 +20,25 @@ npm start          # http://localhost:4200
 Page de connexion : choisir un compte de démonstration parmi les 7 acteurs (ou l’administrateur).
 Les actions sont enregistrées dans le navigateur ; « Profil → Réinitialiser » remet les données à zéro.
 
+## Parcours acheteur (refonte, novembre 2026)
+
+Tout nouvel inscrit **arrive comme acheteur** ; « Devenir vendeur » ouvre l'espace vendeur avec le même compte.
+Compte de démonstration : **Mariam Kaboré** (acheteuse, Ouagadougou). Côté vendeur : **Léon Bazié** (producteur à Léo).
+
+| Écran | Route | Ce qu'il apporte |
+|---|---|---|
+| Accueil boutique | `/accueil` | recherche, catégories, « À faire », livraison en cours, offres près de chez vous, favoris, actualités |
+| Marché / fiche offre | `/marche`, `/marche/:id` | stock confirmé, garanties de disponibilité, avis « achat vérifié », offres équivalentes, discuter, panier |
+| Panier | `/panier` | multi-vendeurs, une commande par lot |
+| Favoris | `/favoris` | baisse de prix, retour en stock |
+| Messages | `/messages/:id` | une discussion par produit, question de disponibilité en un clic, proposition de prix acceptée en un clic |
+| Commande | `/commandes/:id` | confirmation 24 h → paiement `*144*2*1*…*PIN#` → organisation du transport → suivi (carte, heures, chauffeur, étapes) → code de remise → avis |
+| Alertes | `/alertes` | notifications par type + alertes produits |
+| Actualités | `/actualites` | prix, saisons, routes, nouvelles offres et conseils, classés selon vos produits et votre région |
+| Devenir vendeur | `/devenir-vendeur` | producteur, coopérative ou commerçant |
+
+Règles détaillées : [docs/CONTRAT_API.md](docs/CONTRAT_API.md) § « Règles de l'espace acheteur ».
+
 ## Les 7 acteurs et leur outil principal
 
 | Acteur | Question (Besoins_v1) | Outil |

@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import * as S from '../data/seed';
 import {
+  Actualite, AlerteProduit, Conversation, Favori, LignePanier,
   Apport, Avis, Collecte, DisponibiliteCamion, Commande, Cotation, Demande, Depot, Entrepot, Fret, Lot,
   Notification, Offre, RelevePrix, SignalementAxe, Utilisateur,
 } from '../models';
@@ -40,6 +41,12 @@ export class DbService {
   readonly avis = this.repo<Avis>('avis', S.AVIS, 'AV');
   readonly disponibilites = this.repo<DisponibiliteCamion>('disponibilites-camions', S.DISPONIBILITES, 'DC');
   readonly collectes = this.repo<Collecte>('collectes', S.COLLECTES, 'CL');
+  // Espace acheteur
+  readonly conversations = this.repo<Conversation>('conversations', S.CONVERSATIONS, 'CV');
+  readonly favoris = this.repo<Favori>('favoris', S.FAVORIS, 'FV');
+  readonly alertes = this.repo<AlerteProduit>('alertes-produits', S.ALERTES, 'AL');
+  readonly panier = this.repo<LignePanier>('panier', S.PANIER, 'PN');
+  readonly actualites = this.repo<Actualite>('actualites', S.ACTUALITES, 'AC');
 
   /** Remet toutes les données de démonstration à zéro (mode local uniquement). */
   reinitialiserDemo() {

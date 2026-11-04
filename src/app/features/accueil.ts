@@ -5,14 +5,17 @@ import { PlateformeService, de, fmtKg } from '../core/plateforme.service';
 import { LIBELLE_ROLE, SessionService } from '../core/session.service';
 import { ACCES, CONFIG_ROLES } from '../core/roles';
 import { UI } from '../shared/ui';
+import { AccueilAcheteurPage } from './achat/accueil-acheteur';
+import { AccueilVendeurPage } from './achat/accueil-vendeur';
 
 interface Tache { icone: string; texte: string; lien: string; urgence: 'haute' | 'normale' }
 
 @Component({
   selector: 'app-accueil',
-  imports: [RouterLink, ...UI],
+  imports: [RouterLink, AccueilAcheteurPage, AccueilVendeurPage, ...UI],
   template: `
   @let moi = session.utilisateur()!;
+  @if (session.espace() === 'acheteur') { <app-accueil-acheteur /> } @else if (session.espace() === 'vendeur') { <app-accueil-vendeur /> } @else {
   <div class="page">
     <div class="page-head">
       <div>
@@ -85,7 +88,8 @@ interface Tache { icone: string; texte: string; lien: string; urgence: 'haute' |
       </div>
       }
     </div>
-  </div>`,
+  </div>
+  }`,
   styles: `
     .tuiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
     .tuile { display: flex; flex-direction: column; gap: 4px; padding: 16px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); text-decoration: none; color: var(--text); box-shadow: var(--shadow); }
@@ -213,7 +217,7 @@ export class AccueilPage {
   protected readonly prixJour = computed(() => {
     const m = this.marcheRef();
     const miens = [...new Set(this.db.offres.items().filter((o) => o.vendeurId === this.moi.id).map((o) => o.produitId))];
-    const ids = [...miens, 'mais', 'sorgho', 'mil', 'riz', 'niebe', 'oignon', 'tomate'].filter((v, i, a) => a.indexOf(v) === i).slice(0, 7);
+    const ids = [...miens, 'mais', 'sorgho', 'mil', 'riz', 'niebe', 'oignon', 'tomate', 'arachide', 'sesame', 'soja'].filter((v, i, a) => a.indexOf(v) === i && !!produit(v)).slice(0, 7);
     return ids.map((id) => {
       const p = this.pf.prix(id, m) ?? this.pf.prix(id, 'OUA');
       const pr = produit(id);

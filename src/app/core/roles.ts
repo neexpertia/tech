@@ -22,6 +22,9 @@ export interface ConfigRole {
 }
 
 /** Les 7 acteurs, dans l'ordre de la chaîne de valeur. */
+/** Les deux profils proposés aux utilisateurs. */
+export const PROFILS: Role[] = ['acheteur', 'vendeur'];
+
 export const ACTEURS: Exclude<Role, 'admin'>[] = ['producteur', 'cooperative', 'collecteur', 'acheteur', 'transporteur', 'entrepot', 'institution'];
 
 const L = (route: string, label: string, icone: string, query?: Record<string, string>): LienMenu => ({ route, label, icone, ...(query ? { query } : {}) });
@@ -33,7 +36,14 @@ const COMMANDES = L('/commandes', 'Mes commandes', '📦');
 
 const TRANSPORT = L('/transport', 'Transport', '🚚');
 
-const APPRO = L('/approvisionnement', 'Plan d’approvisionnement', '🎯');
+const APPRO = L('/approvisionnement', 'Plan d’achat', '🎯');
+const MESSAGES = L('/messages', 'Messages', '💬');
+const FAVORIS = L('/favoris', 'Favoris', '❤️');
+const PANIER = L('/panier', 'Panier', '🧺');
+const ACTUS = L('/actualites', 'Actualités', '📰');
+const ALERTES = L('/alertes', 'Alertes', '🔔');
+/** Un vendeur reste acheteur : il garde ses favoris, son panier et ses achats. */
+const ACHATS_VENDEUR = { titre: 'Mes achats', liens: [L('/marche', 'Acheter sur le marché', '🛒'), FAVORIS, PANIER] };
 const OBSERVATOIRE = L('/observatoire', 'Observatoire des marchés', '🔭');
 
 
@@ -43,13 +53,13 @@ export const CONFIG_ROLES: Record<Role, ConfigRole> = {
     question: 'Comment vendre ma production dans de bonnes conditions ?',
     accroche: 'Vendez votre récolte au bon prix, et soyez payé à coup sûr.',
     menu: [
-      { titre: 'Vendre', liens: [ACCUEIL, L('/marche', 'Mes offres', '🧺', { vue: 'mes' }), L('/demandes', 'Acheteurs qui cherchent', '📋'), COMMANDES] },
-      { titre: 'Décider', liens: [PRIX, L('/transport', 'Trouver un transport', '🚚')] },
-      
+      { titre: 'Vendre', liens: [ACCUEIL, L('/marche', 'Mes offres', '🧺', { vue: 'mes' }), COMMANDES, MESSAGES, L('/demandes', 'Acheteurs qui cherchent', '📋')] },
+      { titre: 'Décider', liens: [PRIX, ACTUS, L('/transport', 'Trouver un transport', '🚚')] },
+      ACHATS_VENDEUR,
     ],
     tuiles: [
       T('🧺', 'Publier mon offre', 'Les acheteurs sont alertés', '/marche/nouvelle'),
-      T('📋', 'Acheteurs qui cherchent', 'Paiement garanti en séquestre', '/demandes'),
+      T('📋', 'Acheteurs qui cherchent', 'Paiement garanti', '/demandes'),
 
     ],
   },
@@ -59,8 +69,9 @@ export const CONFIG_ROLES: Record<Role, ConfigRole> = {
     accroche: 'Regroupez la production de vos membres et vendez au meilleur débouché.',
     menu: [
       { titre: 'Agréger', liens: [ACCUEIL, L('/collecte', 'Campagnes de collecte', '🎯'), L('/cooperative', 'Apports des membres', '🤝'), L('/cooperative', 'Lots & paiement des membres', '💸', { vue: 'lots' })] },
-      { titre: 'Vendre', liens: [ L('/marche', 'Nos offres', '🧺', { vue: 'mes' }), L('/demandes', 'Demandes & appels d’offres', '📋'), COMMANDES, PRIX] },
-      { titre: 'Logistique', liens: [TRANSPORT] },
+      { titre: 'Vendre', liens: [ L('/marche', 'Nos offres', '🧺', { vue: 'mes' }), COMMANDES, MESSAGES, L('/demandes', 'Demandes & appels d’offres', '📋'), PRIX] },
+      { titre: 'Logistique & infos', liens: [TRANSPORT, ACTUS] },
+      ACHATS_VENDEUR,
     ],
     tuiles: [
       T('🎯', 'Lancer une collecte', 'À partir d’un acheteur, suivi des engagements', '/collecte'),
@@ -75,8 +86,9 @@ export const CONFIG_ROLES: Record<Role, ConfigRole> = {
     accroche: 'Trouvez vite les volumes que vous pouvez revendre, avec une marge sûre.',
     menu: [
       { titre: 'Acheter', liens: [ACCUEIL, L('/opportunites', 'Opportunités autour de moi', '🧭'), L('/marche', 'Lots disponibles', '🛒'), APPRO] },
-      { titre: 'Revendre', liens: [ L('/marche', 'Mes offres', '🧺', { vue: 'mes' }), L('/demandes', 'Acheteurs qui cherchent', '📋'), COMMANDES] },
-      { titre: 'Logistique', liens: [TRANSPORT, PRIX] },
+      { titre: 'Revendre', liens: [ L('/marche', 'Mes offres', '🧺', { vue: 'mes' }), COMMANDES, MESSAGES, L('/demandes', 'Acheteurs qui cherchent', '📋')] },
+      { titre: 'Logistique & infos', liens: [TRANSPORT, PRIX, ACTUS] },
+      { titre: 'Mes achats', liens: [FAVORIS, PANIER] },
     ],
     tuiles: [
       T('🧭', 'Volumes à revendre', 'Autour de mon point de collecte', '/opportunites'),
@@ -86,12 +98,14 @@ export const CONFIG_ROLES: Record<Role, ConfigRole> = {
     ],
   },
   acheteur: {
-    espace: 'Espace acheteur', emoji: '🧑🏾‍💼',
+    espace: 'Espace acheteur', emoji: '🛒',
     question: 'Où acheter suffisamment de produit, au bon prix, avec le moins de risque possible ?',
-    accroche: 'Grossistes, transformateurs, hôtels, exportateurs, supermarchés : achetez le volume voulu, au bon prix, sans risque.',
+    accroche: 'Ménages, restaurants, commerçants, transformateurs, exportateurs : achetez des produits disponibles, au bon prix, avec paiement protégé et livraison suivie.',
     menu: [
-      { titre: 'Acheter', liens: [ACCUEIL, APPRO, L('/marche', 'Offres disponibles', '🛒'), L('/demandes', 'Mes demandes', '📋', { vue: 'miennes' }), COMMANDES] },
-      { titre: 'Décider', liens: [PRIX, TRANSPORT] },
+      { titre: 'Acheter', liens: [L('/accueil', 'Accueil', '🏠'), L('/marche', 'Marché', '🛒'), PANIER, FAVORIS] },
+      { titre: 'Suivre', liens: [L('/commandes', 'Commandes', '📦'), MESSAGES, ALERTES] },
+      { titre: 'S’informer', liens: [ACTUS, PRIX] },
+      { titre: 'Plus', liens: [L('/demandes', 'Achats en gros', '📋', { vue: 'miennes' }), APPRO, L('/devenir-vendeur', 'Devenir vendeur', '🌱')] },
     ],
     tuiles: [
       T('🎯', 'Plan d’approvisionnement', 'Volume, prix et risque en une fois', '/approvisionnement'),
@@ -99,6 +113,17 @@ export const CONFIG_ROLES: Record<Role, ConfigRole> = {
       T('📈', 'Comparer les zones', 'Où acheter moins cher ?', '/prix', { vue: 'produit' }),
       T('📦', 'Livraisons en cours', 'Réception et paiement libéré', '/commandes'),
     ],
+  },
+  vendeur: {
+    espace: 'Espace vendeur', emoji: '🌱',
+    question: 'Comment vendre ma production dans de bonnes conditions ?',
+    accroche: 'Publiez vos produits, recevez des commandes payées d’avance, organisez la livraison.',
+    menu: [
+      { titre: 'Vendre', liens: [L('/accueil', 'Accueil', '🏠'), L('/marche', 'Mes produits', '🧺', { vue: 'mes' }), L('/marche/nouvelle', 'Publier un produit', '🌱'), L('/commandes', 'Commandes reçues', '📦'), MESSAGES] },
+      { titre: 'Trouver des acheteurs', liens: [L('/demandes', 'Acheteurs qui cherchent', '📋'), L('/vendre-ma-recolte', 'À quel prix vendre ?', '💡')] },
+      { titre: 'S’informer', liens: [PRIX, ACTUS, ALERTES] },
+    ],
+    tuiles: [],
   },
   transporteur: {
     espace: 'Espace transporteur', emoji: '🚚',
@@ -160,10 +185,12 @@ export const CONFIG_ROLES: Record<Role, ConfigRole> = {
 };
 
 const TOUS: Role[] = [...ACTEURS, 'admin'];
+const ACHAT: Role[] = ['acheteur', 'vendeur', 'producteur', 'cooperative', 'collecteur'];
 
 /** Rôles autorisés par rubrique (l'admin a toujours accès). */
 export const ACCES: Record<string, Role[]> = {
-  accueil: TOUS, prix: TOUS, notifications: TOUS, profil: TOUS,
+  accueil: TOUS, prix: TOUS, notifications: TOUS, profil: TOUS, alertes: TOUS, actualites: TOUS,
+  favoris: ACHAT, panier: ACHAT, messages: ACHAT, devenirVendeur: ['acheteur'],
   ussd: ['producteur', 'cooperative', 'collecteur'],
   marche: ['producteur', 'cooperative', 'collecteur', 'acheteur', 'institution'],
   vendre: ['producteur', 'cooperative', 'collecteur'],

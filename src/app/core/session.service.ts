@@ -8,10 +8,17 @@ const CLE = 'agri-bf.session';
 export const LIBELLE_ROLE: Record<Role, string> = {
   producteur: 'Producteur', cooperative: 'Coopérative', acheteur: 'Acheteur', transporteur: 'Transporteur',
   entrepot: 'Entrepôt', collecteur: 'Collecteur', institution: 'Institution / organisme public', admin: 'Administrateur',
+  vendeur: 'Vendeur',
 };
 
-export const ROLES_VENDEURS: Role[] = ['producteur', 'cooperative', 'collecteur'];
-export const ROLES_ACHETEURS: Role[] = ['acheteur', 'collecteur'];
+/** Espace affiché : un vendeur bascule entre « Acheter » et « Vendre ». */
+export type Mode = 'achat' | 'vente';
+const CLE_MODE = 'agri-bf.mode';
+
+export const ROLES_VENDEURS: Role[] = ['vendeur', 'producteur', 'cooperative', 'collecteur'];
+export const ROLES_ACHETEURS: Role[] = ['acheteur', 'vendeur', 'collecteur'];
+/** Tous ceux qui peuvent acheter sur le marché (un vendeur reste aussi acheteur). */
+export const ROLES_ACHAT: Role[] = ['acheteur', 'vendeur', 'producteur', 'cooperative', 'collecteur'];
 
 /**
  * Session de démonstration : choix d'un compte fictif, sans mot de passe.
@@ -30,13 +37,34 @@ export class SessionService {
   readonly role = computed(() => this.utilisateur()?.role);
   readonly estVendeur = computed(() => ROLES_VENDEURS.includes(this.role()!));
   readonly estAcheteur = computed(() => ROLES_ACHETEURS.includes(this.role()!));
+  readonly peutAcheter = computed(() => ROLES_ACHAT.includes(this.role()!));
+
+  /** Mode courant d'un vendeur ; un acheteur est toujours en mode « achat ». */
+  private readonly modeBrut = signal<Mode>(this.lireMode());
+  readonly mode = computed<Mode>(() => (this.role() === 'vendeur' ? this.modeBrut() : 'achat'));
+  /** Configuration d'espace à afficher (menu, accueil) */
+  readonly espace = computed<Role>(() => {
+    const r = this.role();
+    if (r === 'vendeur') return this.modeBrut() === 'vente' ? 'vendeur' : 'acheteur';
+    return r ?? 'acheteur';
+  });
+
+  private lireMode(): Mode { try { return localStorage.getItem(CLE_MODE) === 'vente' ? 'vente' : 'achat'; } catch { return 'achat'; } }
+  changerMode(m: Mode) {
+    this.modeBrut.set(m);
+    try { localStorage.setItem(CLE_MODE, m); } catch { /* ignore */ }
+    this.router.navigateByUrl('/accueil');
+  }
 
   private lire() {
     try { return localStorage.getItem(CLE); } catch { return null; }
   }
 
+  /** À la connexion, on arrive toujours dans l'espace acheteur. */
   connecter(id: string) {
     this.userId.set(id);
+    this.modeBrut.set('achat');
+    try { localStorage.setItem(CLE_MODE, 'achat'); } catch { /* ignore */ }
     try { localStorage.setItem(CLE, id); } catch { /* ignore */ }
     this.router.navigateByUrl('/accueil');
   }
@@ -49,6 +77,9 @@ export class SessionService {
 
   a(...roles: Role[]) {
     const r = this.role();
-    return !!r && (roles.includes(r) || r === 'admin');
+    if (!r) return false;
+    if (r === 'admin' || roles.includes(r)) return true;
+    // Un vendeur a tous les droits d'un acheteur et d'un producteur-vendeur.
+    return r === 'vendeur' && (roles.includes('acheteur') || roles.includes('producteur'));
   }
 }

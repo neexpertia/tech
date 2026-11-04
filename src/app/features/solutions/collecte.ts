@@ -128,7 +128,7 @@ export class CollectePage {
   protected readonly produits = PRODUITS;
   protected readonly form = signal(false);
   protected readonly selId = signal<string | null>(null);
-  protected nc = { demandeId: '', produitId: 'sorgho', objectifT: 30, qualiteMin: 'B' as Qualite, prix: 0, dateLimite: new Date(Date.now() + 21 * 864e5).toISOString().slice(0, 10) };
+  protected nc = { demandeId: '', produitId: 'mais', objectifT: 30, qualiteMin: 'B' as Qualite, prix: 0, dateLimite: new Date(Date.now() + 21 * 864e5).toISOString().slice(0, 10) };
   protected ne = { membre: '', sacs: 10 };
 
   private get moi() { return this.session.utilisateur()!; }

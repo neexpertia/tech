@@ -1,67 +1,47 @@
 import { Component, inject, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterOutlet } from '@angular/router';
+import { IconeComponent } from '../../shared/icone';
 import { CONFIG_ROLES } from '../../core/roles';
 import { SessionService } from '../../core/session.service';
 
 /** Mise en page du site public (visiteurs) : barre de navigation + pied de page. */
 @Component({
   selector: 'app-public',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, IconeComponent],
   template: `
   <header class="nav">
     <div class="in">
-      <a class="brand" routerLink="/" (click)="ouvert.set(false)"><span class="logo">🌾</span><strong>FasoAgri</strong></a>
-      <button class="ghost burger" (click)="ouvert.set(!ouvert())" aria-label="Menu">☰</button>
-      <nav [class.ouvert]="ouvert()" (click)="ouvert.set(false)">
-        <a routerLink="/" routerLinkActive="on" [routerLinkActiveOptions]="{ exact: true }">Accueil</a>
-        <a routerLink="/decouvrir/prix" routerLinkActive="on">Prix des marchés</a>
-        <a routerLink="/decouvrir/marche" routerLinkActive="on">Marché</a>
-        <a routerLink="/decouvrir/observatoire" routerLinkActive="on">Observatoire</a>
-        <a routerLink="/" fragment="acteurs">Pour qui ?</a>
-        <a routerLink="/" fragment="comment">Comment ça marche</a>
-        <span class="sep"></span>
-        @if (session.utilisateur(); as u) {
-          <a class="btn primary" routerLink="/accueil">{{ espace(u.role) }} →</a>
-        } @else {
-          <a class="btn" routerLink="/connexion">Se connecter</a>
-          <a class="btn primary" routerLink="/inscription">Créer un compte</a>
-        }
-      </nav>
+      <a class="brand" routerLink="/"><span class="logo"><app-ic n="pousse" [taille]="20" /></span><strong>FasoAgri</strong></a>
+      <span class="sep"></span>
+      <a class="lien" routerLink="/" fragment="comment">Comment ça marche</a>
+      @if (session.utilisateur()) {
+        <a class="btn primary" routerLink="/accueil">Mon espace</a>
+      } @else {
+        <a class="btn" routerLink="/connexion">Se connecter</a>
+        <a class="btn primary large-only" routerLink="/inscription">Créer un compte</a>
+      }
     </div>
   </header>
   <main class="public"><router-outlet /></main>
   <footer>
-    <div class="in grille">
-      <div><strong>🌾 FasoAgri</strong><p class="small">La place de marché agricole du Burkina Faso : prix, ventes, transport, stockage et financement.</p></div>
-    
-      <div><strong>Accès</strong><a routerLink="/inscription">Créer un compte</a><a routerLink="/connexion">Se connecter</a><span class="small">Sans internet : code USSD *000# (démo)</span></div>
-      <div><strong>Contact</strong><span class="small">Assistance : +226 •• •• •• ••</span><span class="small">Prototype — données fictives</span></div>
+    <div class="in">
+      <span><strong>FasoAgri</strong> · Du champ à votre porte</span>
+      <span>Sans internet : *000# (démo)</span>
+      <span>Prototype, données fictives</span>
     </div>
   </footer>`,
   styles: `
-    .nav { position: sticky; top: 0; z-index: 30; background: var(--surface); border-bottom: 1px solid var(--border); }
-    .in { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-    .nav .in { display: flex; align-items: center; gap: 16px; min-height: 60px; }
-    .brand { display: flex; gap: 8px; align-items: center; text-decoration: none; color: var(--text); font-size: 18px; }
-    .logo { font-size: 24px; }
-    nav { display: flex; align-items: center; gap: 4px; flex: 1; }
-    nav > a:not(.btn) { padding: 8px 12px; border-radius: 8px; text-decoration: none; color: var(--text); font-weight: 500; }
-    nav > a:not(.btn):hover { background: var(--surface-2); }
-    nav > a.on { color: var(--primary); }
+    .nav { position: sticky; top: 0; z-index: 30; background: color-mix(in srgb, var(--fond) 88%, transparent); backdrop-filter: blur(8px); }
+    .in { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+    .nav .in { display: flex; align-items: center; gap: 8px; min-height: 68px; }
+    .brand { display: flex; gap: 10px; align-items: center; text-decoration: none; color: var(--encre); font-size: var(--t-l); }
+    .logo { width: 34px; height: 34px; border-radius: 10px; background: var(--vert); color: #fff; display: grid; place-items: center; }
     .sep { flex: 1; }
-    .burger { display: none; margin-left: auto; font-size: 20px; }
-    main.public { min-height: calc(100vh - 60px); }
-    footer { background: #13301f; color: #d9e6dd; padding: 32px 0; margin-top: 40px; }
-    footer .grille { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 24px; }
-    footer a, footer span { display: block; color: #d9e6dd; text-decoration: none; margin-top: 6px; }
-    footer a:hover { text-decoration: underline; }
-    @media (max-width: 860px) {
-      .burger { display: inline-flex; }
-      nav { display: none; position: absolute; top: 60px; left: 0; right: 0; background: var(--surface); flex-direction: column; align-items: stretch; padding: 10px 16px 16px; border-bottom: 1px solid var(--border); }
-      nav.ouvert { display: flex; }
-      .sep { display: none; }
-      footer .grille { grid-template-columns: 1fr 1fr; }
-    }
+    .lien { color: var(--encre); text-decoration: none; padding: 8px 12px; }
+    main.public { min-height: calc(100vh - 140px); }
+    footer { margin-top: 72px; padding: 28px 0; border-top: 1px solid var(--ligne); }
+    footer .in { display: flex; gap: 24px; flex-wrap: wrap; justify-content: space-between; font-size: var(--t-s); color: var(--gris); }
+    @media (max-width: 640px) { .lien, .large-only { display: none; } .nav .btn { padding: 7px 12px; white-space: nowrap; } }
   `,
 })
 export class PublicLayout {

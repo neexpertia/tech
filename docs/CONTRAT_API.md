@@ -34,6 +34,20 @@ Chaque ressource expose `GET /{r}`, `POST /{r}`, `PATCH /{r}/{id}`, `DELETE /{r}
 | `disponibilites-camions` | `DisponibiliteCamion` | `id` | camion libre annoncé (retour à vide) ; réservable par les chargeurs |
 | `collectes` | `Collecte` | `id` | campagne de collecte d'une coopérative, engagements des membres embarqués |
 
+### Espace acheteur (refonte novembre 2026)
+
+| Ressource (URL) | Interface | Clé | Remarques |
+|---|---|---|---|
+| `favoris` | `Favori` | `id` | `prixKgAjout` sert à détecter une baisse de prix |
+| `alertes-produits` | `AlerteProduit` | `id` | produit, prix max, qualité min, rayon (km) autour d'une localité |
+| `panier` | `LignePanier` | `id` | une ligne par offre ; la validation émet une commande par ligne |
+| `conversations` | `Conversation` | `id` | une discussion par (offre, acheteur) ; `messages[]` embarqués (texte, question/réponse de disponibilité, proposition de prix) |
+| `actualites` | `Actualite` | `id` | contenus éditoriaux ; les actualités de prix, saison, routes et nouvelles offres sont calculées |
+
+Champs ajoutés : `Offre.stockConfirmeLe`, `Commande.confirmationAvant / expeditionAvant / codeRemise / livraison / origineAchat`,
+`Avis.offreId / produitId / achatVerifie`, `Notification.type`, `Utilisateur.vendeurDepuis / produitsVendus`,
+statut de commande `attente_confirmation`.
+
 ### Réponses aux préoccupations des acteurs (calculs)
 
 Calculées aujourd'hui dans `src/app/core/solutions.service.ts` (hypothèses regroupées dans `HYP`). À servir par le backend en lecture :
@@ -66,6 +80,22 @@ Elles sont aujourd'hui dans `src/app/core/plateforme.service.ts`. À transformer
 | Score | `GET /utilisateurs/{id}/score` | calcul serveur (identité, ancienneté, transactions, avis, litiges) |
 
 Montants : `total acheteur = marchandise + transport + frais de service (2 %)` ; le vendeur reçoit la valeur de la marchandise.
+
+### Règles de l'espace acheteur
+
+- **Tout nouvel inscrit est acheteur.** « Devenir vendeur » change le rôle (producteur, coopérative, collecteur) sans perdre achats, favoris et messages ; publier exige la vérification des pièces.
+- **Achat sans KYC jusqu'à 500 000 FCFA par commande** (`SEUIL_KYC_ACHAT`), au-delà pièce d'identité vérifiée.
+- **Disponibilité garantie :**
+  - à la commande, la quantité est réservée (`quantiteRestanteKg` décrémentée) et la commande passe `attente_confirmation` ;
+  - le vendeur confirme (→ `attente_paiement`) ou déclare l'indisponibilité (→ `annulee`, offre `epuisee`) ;
+  - **sans réponse sous 24 h** (`confirmationAvant`) : annulation automatique, stock libéré, acheteur et vendeur notifiés (tâche planifiée côté serveur ; le prototype l'exécute à l'ouverture de l'espace et chaque minute) ;
+  - fraîcheur de l'offre (`stockConfirmeLe`) : ≤ 3 j « confirmé », ≤ 10 j « récent », ≤ 30 j « à reconfirmer », au-delà masquée du marché ;
+  - une réponse « oui » à une question de disponibilité dans la messagerie reconfirme le stock ; une proposition de prix acceptée vaut confirmation.
+- **Paiement Orange Money :** code USSD `*144*2*1*{numéro séquestre}*{montant total}*PIN#` (gabarit dans `MODES_PAIEMENT`, numéro dans `NUMERO_SEQUESTRE`, actuellement fictif). Le code secret n'est jamais saisi sur la plateforme ; en production le passage en `sequestre` doit venir du callback de l'opérateur, pas de la saisie de l'acheteur.
+- **Expédition :** `expeditionAvant` = paiement + 5 jours ; au-delà l'acheteur peut annuler et être remboursé depuis le séquestre.
+- **Livraison :** le vendeur renseigne `livraison` (mode, transporteur, chauffeur, téléphone, véhicule, départ/arrivée prévus, lieu de remise), marque le départ (`expediee`), ajoute des étapes, signale l'arrivée (`livree`) ; l'acheteur donne son `codeRemise` au chauffeur puis confirme (`terminee`, fonds libérés).
+- **Avis produit :** uniquement après une commande `terminee`, posé par l'acheteur → `achatVerifie: true`.
+- **Notifications :** favoris (baisse de prix, retour en stock), alertes produits (nouvelle offre correspondante), chaque étape de commande et de livraison, chaque message.
 
 ## 3. Canaux et intégrations
 

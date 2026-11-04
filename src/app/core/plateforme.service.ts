@@ -1,14 +1,33 @@
 import { Injectable, computed, inject } from '@angular/core';
 import { DbService } from './api/db.service';
 import {
-  COMMISSION_PCT, MARCHES, MOIS, PARAM_PRIX, coutTransportKg, distanceKm, localite, produit,
+  COMMISSION_PCT, DELAI_CONFIRMATION_H, DELAI_EXPEDITION_J, FRAICHEUR_J, MARCHES, MOIS, PARAM_PRIX, coutTransportKg, distanceKm, localite, produit,
 } from './data/referentiel';
 import {
-  Commande, Cotation, Demande, Fret, Offre, Operateur, Qualite, StatutCommande, Utilisateur,
+  Commande, Cotation, Demande, Fret, Livraison, Offre, Operateur, Qualite, StatutCommande, TypeNotification, Utilisateur,
 } from './models';
 import { SessionService } from './session.service';
 
 export const aujourdhui = () => new Date().toISOString().slice(0, 10);
+export const maintenant = () => new Date().toISOString();
+const dansHeures = (h: number) => new Date(Date.now() + h * 3_600_000).toISOString();
+/** Nombre de jours entiers écoulés depuis une date AAAA-MM-JJ */
+export const joursDepuis = (d: string) => Math.max(0, Math.floor((Date.parse(aujourdhui()) - Date.parse(d.slice(0, 10))) / 86_400_000));
+/** « 14 h 05 » */
+export const heure = (iso?: string) => (iso ? new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }).replace(':', ' h ') : '—');
+
+export type NiveauFraicheur = 'confirme' | 'recent' | 'a_reconfirmer' | 'masque';
+/** Fraîcheur du stock d'une offre : depuis combien de temps le vendeur n'a pas confirmé l'avoir encore. */
+export function fraicheur(o: Offre): { jours: number; niveau: NiveauFraicheur; libelle: string } {
+  const jours = joursDepuis(o.stockConfirmeLe ?? o.creeLe);
+  const quand = jours === 0 ? 'aujourd’hui' : jours === 1 ? 'hier' : `il y a ${jours} jours`;
+  if (jours <= FRAICHEUR_J.confirme) return { jours, niveau: 'confirme', libelle: `Vérifié ${quand}` };
+  if (jours <= FRAICHEUR_J.aReconfirmer) return { jours, niveau: 'recent', libelle: `Vérifié ${quand}` };
+  if (jours <= FRAICHEUR_J.masque) return { jours, niveau: 'a_reconfirmer', libelle: `Pas vérifié depuis ${jours} jours` };
+  return { jours, niveau: 'masque', libelle: `Pas vérifié depuis ${jours} jours` };
+}
+/** Offre visible et commandable sur le marché */
+export const offreVisible = (o: Offre) => o.statut === 'active' && o.quantiteRestanteKg > 0 && fraicheur(o).niveau !== 'masque';
 
 /** 850 → « 850 kg » ; 12500 → « 12,5 t » */
 export const fmtKg = (kg: number) => (kg >= 1000 ? `${(Math.round(kg / 100) / 10).toLocaleString('fr-FR')} t` : `${Math.round(kg).toLocaleString('fr-FR')} kg`);
@@ -16,7 +35,7 @@ export const fmtKg = (kg: number) => (kg >= 1000 ? `${(Math.round(kg / 100) / 10
 export const de = (nom: string) => (/^[aeiouyéèêh]/i.test(nom) ? `d’${nom.toLowerCase()}` : `de ${nom.toLowerCase()}`);
 
 export const LIBELLE_STATUT: Record<StatutCommande, string> = {
-  attente_paiement: 'En attente de paiement', sequestre: 'Payée (séquestre)', expediee: 'Expédiée',
+  attente_confirmation: 'Le vendeur vérifie', attente_paiement: 'À payer', sequestre: 'Payée', expediee: 'En route',
   livree: 'Livrée', terminee: 'Terminée', litige: 'En litige', annulee: 'Annulée',
 };
 
@@ -103,16 +122,44 @@ export class PlateformeService {
 
   async publierOffre(o: Omit<Offre, 'id' | 'vendeurId' | 'statut' | 'creeLe' | 'quantiteRestanteKg' | 'lot'>) {
     const lot = `BF-${o.localiteId}-${o.produitId.slice(0, 3).toUpperCase()}-${aujourdhui().slice(2, 7).replace('-', '')}-${Math.floor(Math.random() * 90 + 10)}`;
-    const offre = await this.db.offres.create({ ...o, lot, vendeurId: this.moi, quantiteRestanteKg: o.quantiteKg, statut: 'active', creeLe: aujourdhui() });
+    const offre = await this.db.offres.create({ ...o, lot, vendeurId: this.moi, quantiteRestanteKg: o.quantiteKg, statut: 'active', creeLe: aujourdhui(), stockConfirmeLe: aujourdhui() });
+    // Alertes produits des acheteurs (« préviens-moi quand… »)
+    for (const a of this.db.alertes.items().filter((a) => a.active && a.userId !== this.moi && a.produitId === o.produitId)) {
+      const okPrix = !a.prixMaxKg || o.prixKg <= a.prixMaxKg;
+      const okQual = !a.qualiteMin || o.qualite <= a.qualiteMin;
+      const okRayon = !a.rayonKm || distanceKm(o.localiteId, a.localiteId) <= a.rayonKm;
+      if (okPrix && okQual && okRayon) await this.notifier(a.userId, `Alerte ${produit(o.produitId).nom.toLowerCase()} : nouvelle offre à ${o.prixKg} F/kg à ${localite(o.localiteId).nom} (qualité ${o.qualite}).`, `/marche/${offre.id}`, 'alerte');
+    }
     // Alerte aux acheteurs ayant une demande ouverte sur ce produit
     for (const d of this.db.demandes.items().filter((d) => d.statut === 'ouverte' && d.produitId === o.produitId)) {
-      await this.notifier(d.acheteurId, `Nouvelle offre ${de(produit(o.produitId).nom)} à ${localite(o.localiteId).nom} : ${o.prixKg} F/kg.`, `/marche/${offre.id}`);
+      if (!this.db.alertes.items().some((a) => a.active && a.userId === d.acheteurId && a.produitId === o.produitId))
+        await this.notifier(d.acheteurId, `Nouvelle offre ${de(produit(o.produitId).nom)} à ${localite(o.localiteId).nom} : ${o.prixKg} F/kg.`, `/marche/${offre.id}`, 'alerte');
     }
     return offre;
   }
 
   async retirerOffre(id: string) {
     return this.db.offres.update(id, { statut: 'retiree' });
+  }
+
+  /**
+   * Le vendeur confirme qu'il a toujours la marchandise (et peut ajuster stock et prix).
+   * Les acheteurs qui suivent l'offre sont prévenus d'une baisse de prix ou d'un retour en stock.
+   */
+  async confirmerStock(id: string, maj: { quantiteRestanteKg?: number; prixKg?: number } = {}) {
+    const o = this.db.offres.get(id)!;
+    const reste = maj.quantiteRestanteKg ?? o.quantiteRestanteKg;
+    const prix = maj.prixKg ?? o.prixKg;
+    const etaitIndispo = o.statut !== 'active' || o.quantiteRestanteKg <= 0 || fraicheur(o).niveau === 'masque';
+    const n = await this.db.offres.update(id, {
+      quantiteRestanteKg: reste, prixKg: prix, stockConfirmeLe: aujourdhui(), statut: reste > 0 ? 'active' : 'epuisee',
+      quantiteKg: Math.max(o.quantiteKg, reste),
+    });
+    for (const f of this.db.favoris.items().filter((f) => f.offreId === id)) {
+      if (reste > 0 && etaitIndispo) await this.notifier(f.userId, `De nouveau disponible : ${produit(o.produitId).nom.toLowerCase()} de ${this.nom(o.vendeurId)} (${fmtKg(reste)}).`, `/marche/${id}`, 'favori');
+      else if (prix < o.prixKg) await this.notifier(f.userId, `Baisse de prix sur un favori : ${produit(o.produitId).nom.toLowerCase()} à ${prix} F/kg (au lieu de ${o.prixKg}).`, `/marche/${id}`, 'favori');
+    }
+    return n;
   }
 
   async publierDemande(d: Omit<Demande, 'id' | 'acheteurId' | 'statut' | 'creeLe'>) {
@@ -144,6 +191,7 @@ export class PlateformeService {
     return this.creerCommande({
       acheteurId: d.acheteurId, vendeurId: c.vendeurId, produitId: d.produitId, quantiteKg: Math.min(c.quantiteKg, d.quantiteKg),
       prixKg: c.prixKg, origineId: c.localiteId, destinationId: d.localiteLivraisonId, source: { type: 'cotation', id: c.id },
+      origineAchat: 'cotation', statut: 'attente_paiement', // la cotation vaut confirmation de disponibilité
     });
   }
 
@@ -152,28 +200,87 @@ export class PlateformeService {
     await this.notifier(c.vendeurId, 'Votre cotation n’a pas été retenue.', `/demandes/${c.demandeId}`);
   }
 
-  async commanderOffre(offreId: string, quantiteKg: number, destinationId: string, avecTransport: boolean) {
+  /**
+   * Émettre une commande sur une offre. La quantité est réservée immédiatement ;
+   * le vendeur doit confirmer la disponibilité sous 24 h avant que l'acheteur paie.
+   * Avec un prix négocié (proposition acceptée dans la messagerie), ce prix remplace celui de l'offre.
+   */
+  async commanderOffre(offreId: string, quantiteKg: number, destinationId: string, avecTransport: boolean, opts: { prixKg?: number; origineAchat?: Commande['origineAchat'] } = {}) {
     const o = this.db.offres.get(offreId)!;
     if (quantiteKg > o.quantiteRestanteKg) throw new Error('Quantité supérieure au disponible');
+    if (o.vendeurId === this.moi) throw new Error('Vous ne pouvez pas acheter votre propre offre');
     const reste = o.quantiteRestanteKg - quantiteKg;
     await this.db.offres.update(o.id, { quantiteRestanteKg: reste, statut: reste <= 0 ? 'epuisee' : 'active' });
     return this.creerCommande({
-      acheteurId: this.moi, vendeurId: o.vendeurId, produitId: o.produitId, quantiteKg, prixKg: o.prixKg,
+      acheteurId: this.moi, vendeurId: o.vendeurId, produitId: o.produitId, quantiteKg, prixKg: opts.prixKg ?? o.prixKg,
       origineId: o.localiteId, destinationId, source: { type: 'offre', id: o.id }, sansTransport: !avecTransport,
+      origineAchat: opts.origineAchat ?? 'direct', statut: 'attente_confirmation',
     });
   }
 
-  private async creerCommande(p: { acheteurId: string; vendeurId: string; produitId: string; quantiteKg: number; prixKg: number; origineId: string; destinationId: string; source: Commande['source']; sansTransport?: boolean }) {
+  private async creerCommande(p: { acheteurId: string; vendeurId: string; produitId: string; quantiteKg: number; prixKg: number; origineId: string; destinationId: string; source: Commande['source']; sansTransport?: boolean; statut: StatutCommande; origineAchat: Commande['origineAchat'] }) {
     const frais = p.sansTransport ? 0 : coutTransportKg(distanceKm(p.origineId, p.destinationId)) * p.quantiteKg;
     const n = Math.max(0, ...this.db.commandes.items().map((c) => Number(c.reference.split('-').pop()) || 0)) + 1;
     const cmd = await this.db.commandes.create({
       reference: `CMD-2026-${String(n).padStart(4, '0')}`, acheteurId: p.acheteurId, vendeurId: p.vendeurId, produitId: p.produitId,
       quantiteKg: p.quantiteKg, prixKg: p.prixKg, fraisTransport: frais, commissionPct: COMMISSION_PCT,
-      origineId: p.origineId, destinationId: p.destinationId, source: p.source, statut: 'attente_paiement',
-      historique: [{ date: aujourdhui(), statut: 'attente_paiement', parId: this.moi }], messages: [], creeLe: aujourdhui(),
+      origineId: p.origineId, destinationId: p.destinationId, source: p.source, statut: p.statut, origineAchat: p.origineAchat,
+      historique: [{ date: aujourdhui(), statut: p.statut, parId: this.moi }], messages: [], creeLe: aujourdhui(),
+      codeRemise: String(1000 + Math.floor(Math.random() * 9000)),
+      ...(p.statut === 'attente_confirmation' ? { confirmationAvant: dansHeures(DELAI_CONFIRMATION_H) } : {}),
     });
-    await this.notifier(p.vendeurId, `Nouvelle commande ${cmd.reference} : ${fmtKg(p.quantiteKg)} ${de(produit(p.produitId).nom)}.`, `/commandes/${cmd.id}`);
+    await this.notifier(p.vendeurId, p.statut === 'attente_confirmation'
+      ? `Nouvelle commande ${cmd.reference} : ${fmtKg(p.quantiteKg)} ${de(produit(p.produitId).nom)}. Confirmez la disponibilité sous ${DELAI_CONFIRMATION_H} h.`
+      : `Nouvelle commande ${cmd.reference} : ${fmtKg(p.quantiteKg)} ${de(produit(p.produitId).nom)}.`, `/commandes/${cmd.id}`, 'commande');
     return cmd;
+  }
+
+  // ================================================================ DISPONIBILITÉ (avant paiement)
+
+  /** Le vendeur confirme qu'il a bien la marchandise : l'acheteur peut payer. */
+  async confirmerDisponibilite(c: Commande, note?: string) {
+    await this.changerStatut(c, 'attente_paiement', note || 'Disponibilité confirmée par le vendeur');
+    if (c.source.type === 'offre') await this.db.offres.update(c.source.id, { stockConfirmeLe: aujourdhui() });
+    await this.notifier(c.acheteurId, `${this.nom(c.vendeurId)} a confirmé la disponibilité (${c.reference}). Vous pouvez payer.`, `/commandes/${c.id}`, 'commande');
+  }
+
+  /** Le vendeur n'a plus la marchandise : commande annulée, stock corrigé, l'acheteur reçoit des alternatives. */
+  async declarerIndisponible(c: Commande, motif: string) {
+    await this.changerStatut(c, 'annulee', `Indisponible : ${motif}`);
+    if (c.source.type === 'offre') {
+      const o = this.db.offres.get(c.source.id);
+      if (o) await this.db.offres.update(o.id, { statut: 'epuisee', quantiteRestanteKg: 0, stockConfirmeLe: aujourdhui() });
+    }
+    await this.notifier(c.acheteurId, `${c.reference} annulée : le vendeur n’a plus la marchandise (${motif}). Voici des offres équivalentes.`, `/commandes/${c.id}`, 'commande');
+  }
+
+  /**
+   * Règles de délai (exécutées côté backend par une tâche planifiée ; ici à l'ouverture de l'espace) :
+   *  - pas de confirmation du vendeur dans les 24 h → commande annulée, quantité libérée ;
+   *  - pas d'expédition dans les 5 jours après paiement → l'acheteur est prévenu qu'il peut annuler (remboursement).
+   */
+  async verifierDelais() {
+    const now = Date.now();
+    for (const c of this.db.commandes.items()) {
+      if (c.statut === 'attente_confirmation' && c.confirmationAvant && Date.parse(c.confirmationAvant) < now) {
+        await this.db.commandes.update(c.id, {
+          statut: 'annulee', historique: [...c.historique, { date: aujourdhui(), statut: 'annulee', parId: 'U-ADM', note: `Annulation automatique : pas de confirmation du vendeur sous ${DELAI_CONFIRMATION_H} h` }],
+        });
+        await this.libererStock(c);
+        await this.notifier(c.acheteurId, `${c.reference} annulée automatiquement : le vendeur n’a pas confirmé sous ${DELAI_CONFIRMATION_H} h. Rien ne vous a été débité.`, `/commandes/${c.id}`, 'commande');
+        await this.notifier(c.vendeurId, `${c.reference} annulée : disponibilité non confirmée à temps. Pensez à mettre à jour votre stock.`, `/commandes/${c.id}`, 'commande');
+      }
+    }
+  }
+
+  expeditionEnRetard(c: Commande) {
+    return c.statut === 'sequestre' && !!c.expeditionAvant && Date.parse(c.expeditionAvant) < Date.now();
+  }
+
+  private async libererStock(c: Commande) {
+    if (c.source.type !== 'offre') return;
+    const o = this.db.offres.get(c.source.id);
+    if (o && o.statut !== 'retiree') await this.db.offres.update(o.id, { quantiteRestanteKg: o.quantiteRestanteKg + c.quantiteKg, statut: 'active' });
   }
 
   // ================================================================ CYCLE DE COMMANDE
@@ -191,23 +298,72 @@ export class PlateformeService {
     });
   }
 
-  async payer(c: Commande, operateur: Operateur) {
-    const ref = `${operateur.split(' ').map((x) => x[0]).join('')}-${Math.floor(Math.random() * 9_000_000 + 1_000_000)}`;
-    const cmd = await this.changerStatut(c, 'sequestre', `Paiement ${operateur} bloqué en séquestre`, {
+  /**
+   * Paiement. En production, la confirmation vient de l'opérateur (callback) ; ici l'acheteur
+   * saisit l'identifiant de transaction reçu par SMS après avoir composé le code USSD.
+   */
+  async payer(c: Commande, operateur: Operateur, referenceTransaction?: string) {
+    const ref = referenceTransaction?.trim() || `${operateur.split(' ').map((x) => x[0]).join('')}-${Math.floor(Math.random() * 9_000_000 + 1_000_000)}`;
+    const cmd = await this.changerStatut(c, 'sequestre', `Paiement ${operateur} reçu et protégé par FasoAgri`, {
       paiement: { operateur, reference: ref, montant: this.montant(c).total, date: aujourdhui() },
+      expeditionAvant: dansHeures(DELAI_EXPEDITION_J * 24),
     });
-    await this.notifier(c.vendeurId, `${c.reference} payée : les fonds sont en séquestre. Vous pouvez préparer l’expédition.`, `/commandes/${c.id}`);
+    await this.notifier(c.vendeurId, `${c.reference} payée : l’argent est gardé par FasoAgri. Organisez la livraison (transport, heure de départ et d’arrivée).`, `/commandes/${c.id}`, 'paiement');
     return cmd;
   }
 
+  // ================================================================ LIVRAISON & SUIVI
+
+  /** Le vendeur renseigne le transport convenu avec le chauffeur (heures, lieu de remise). */
+  async organiserLivraison(c: Commande, l: Omit<Livraison, 'etapes'>) {
+    const etapes = c.livraison?.etapes ?? [];
+    const texte = `Transport organisé : ${l.chauffeur ? 'chauffeur ' + l.chauffeur + ', ' : ''}départ ${this.quand(l.departPrevu)}, arrivée prévue ${this.quand(l.arriveePrevue)}${l.pointRemise ? ' — remise : ' + l.pointRemise : ''}.`;
+    await this.db.commandes.update(c.id, { livraison: { ...l, etapes: [...etapes, { date: maintenant(), texte, lieu: localite(c.origineId).nom, auteurId: this.moi }] } });
+    await this.notifier(c.acheteurId, `${c.reference} : ${texte}`, `/commandes/${c.id}`, 'livraison');
+  }
+
+  private quand(iso?: string) {
+    if (!iso) return 'à préciser';
+    const d = new Date(iso);
+    const jour = iso.slice(0, 10) === aujourdhui() ? 'aujourd’hui' : d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'short' });
+    return `${jour} à ${heure(iso)}`;
+  }
+
+  async ajouterEtape(c: Commande, texte: string, lieu?: string) {
+    const l = c.livraison ?? { mode: 'vendeur' as const, etapes: [] };
+    await this.db.commandes.update(c.id, { livraison: { ...l, etapes: [...l.etapes, { date: maintenant(), texte, lieu, auteurId: this.moi }] } });
+    await this.notifier(c.acheteurId, `${c.reference} — suivi : ${lieu ? lieu + ' · ' : ''}${texte}`, `/commandes/${c.id}`, 'livraison');
+  }
+
+  /** Départ effectif : la commande passe « expédiée ». */
   async expedier(c: Commande, note: string) {
-    await this.changerStatut(c, 'expediee', note || undefined);
-    await this.notifier(c.acheteurId, `${c.reference} expédiée. ${note}`, `/commandes/${c.id}`);
+    const fresh = this.db.commandes.get(c.id)!;
+    const l = fresh.livraison ?? { mode: 'vendeur' as const, etapes: [] };
+    await this.changerStatut(fresh, 'expediee', note || 'Marchandise partie', {
+      livraison: { ...l, departPrevu: l.departPrevu && Date.parse(l.departPrevu) > Date.now() ? maintenant() : (l.departPrevu ?? maintenant()), etapes: [...l.etapes, { date: maintenant(), texte: note || 'Départ de la marchandise.', lieu: localite(c.origineId).nom, auteurId: this.moi }] },
+    });
+    await this.notifier(c.acheteurId, `${c.reference} est partie de ${localite(c.origineId).nom}. ${l.arriveePrevue ? 'Arrivée prévue ' + this.quand(l.arriveePrevue) + '.' : ''}`, `/commandes/${c.id}`, 'livraison');
+  }
+
+  /** Arrivée au point de remise : l'acheteur est invité à venir avec son code. */
+  async signalerArrivee(c: Commande) {
+    const l = c.livraison ?? { mode: 'vendeur' as const, etapes: [] };
+    await this.changerStatut(c, 'livree', 'Arrivée au point de remise', {
+      livraison: { ...l, etapes: [...l.etapes, { date: maintenant(), texte: 'Arrivée au point de remise.', lieu: l.pointRemise ?? localite(c.destinationId).nom, auteurId: this.moi }] },
+    });
+    await this.notifier(c.acheteurId, `${c.reference} est arrivée${l.pointRemise ? ' : ' + l.pointRemise : ''}. Donnez votre code de réception au chauffeur puis confirmez la réception.`, `/commandes/${c.id}`, 'livraison');
   }
 
   async confirmerReception(c: Commande) {
     await this.changerStatut(c, 'terminee', 'Réception confirmée — fonds libérés au vendeur');
-    await this.notifier(c.vendeurId, `${c.reference} : réception confirmée, ${this.montant(c).netVendeur.toLocaleString('fr-FR')} FCFA versés.`, `/commandes/${c.id}`);
+    await this.notifier(c.vendeurId, `${c.reference} : réception confirmée, ${this.montant(c).netVendeur.toLocaleString('fr-FR')} FCFA versés.`, `/commandes/${c.id}`, 'paiement');
+  }
+
+  /** Vendeur payé mais pas d'expédition dans le délai : l'acheteur annule et est remboursé. */
+  async annulerPourRetard(c: Commande) {
+    await this.changerStatut(c, 'annulee', `Expédition non faite sous ${DELAI_EXPEDITION_J} jours — acheteur remboursé`);
+    await this.libererStock(c);
+    await this.notifier(c.vendeurId, `${c.reference} annulée par l’acheteur : expédition non faite dans les délais. Les fonds lui sont restitués.`, `/commandes/${c.id}`, 'commande');
   }
 
   async ouvrirLitige(c: Commande, motif: string, description: string) {
@@ -222,22 +378,25 @@ export class PlateformeService {
   }
 
   async annuler(c: Commande) {
-    await this.changerStatut(c, 'annulee', 'Commande annulée avant paiement');
-    if (c.source.type === 'offre') {
-      const o = this.db.offres.get(c.source.id);
-      if (o) await this.db.offres.update(o.id, { quantiteRestanteKg: o.quantiteRestanteKg + c.quantiteKg, statut: 'active' });
-    }
+    await this.changerStatut(c, 'annulee', 'Commande annulée par l’acheteur avant paiement');
+    await this.libererStock(c);
+    await this.notifier(c.vendeurId, `${c.reference} annulée par l’acheteur avant paiement.`, `/commandes/${c.id}`, 'commande');
   }
 
   async message(c: Commande, texte: string) {
     await this.db.commandes.update(c.id, { messages: [...c.messages, { date: aujourdhui(), auteurId: this.moi, texte }] });
     const autre = c.acheteurId === this.moi ? c.vendeurId : c.acheteurId;
-    await this.notifier(autre, `Message sur ${c.reference} : « ${texte.slice(0, 60)} »`, `/commandes/${c.id}`);
+    await this.notifier(autre, `Message sur ${c.reference} : « ${texte.slice(0, 60)} »`, `/commandes/${c.id}`, 'message');
   }
 
+  /** Avis après réception. Posé par l'acheteur, il compte aussi comme avis produit « achat vérifié ». */
   async noter(c: Commande, note: 1 | 2 | 3 | 4 | 5, commentaire: string) {
-    const cible = c.acheteurId === this.moi ? c.vendeurId : c.acheteurId;
-    return this.db.avis.create({ commandeId: c.id, auteurId: this.moi, cibleId: cible, note, commentaire, date: aujourdhui() });
+    const parAcheteur = c.acheteurId === this.moi;
+    const cible = parAcheteur ? c.vendeurId : c.acheteurId;
+    return this.db.avis.create({
+      commandeId: c.id, auteurId: this.moi, cibleId: cible, note, commentaire, date: aujourdhui(),
+      ...(parAcheteur ? { produitId: c.produitId, achatVerifie: true, ...(c.source.type === 'offre' ? { offreId: c.source.id } : {}) } : {}),
+    });
   }
 
   async demanderTransport(c: Commande) {
@@ -374,8 +533,8 @@ export class PlateformeService {
   });
   readonly nonLues = computed(() => this.mesNotifications().filter((n) => !n.lu).length);
 
-  async notifier(userId: string, texte: string, lien?: string) {
-    return this.db.notifications.create({ userId, texte, lien, date: aujourdhui(), lu: false });
+  async notifier(userId: string, texte: string, lien?: string, type: TypeNotification = 'autre') {
+    return this.db.notifications.create({ userId, texte, lien, date: aujourdhui(), lu: false, type });
   }
 
   async toutLire() {

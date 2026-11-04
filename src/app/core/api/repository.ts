@@ -33,7 +33,7 @@ export interface Repository<T extends Entite> {
   remove(id: string): Promise<void>;
 }
 
-const PREFIXE = 'agri-bf.v3.';
+const PREFIXE = 'agri-bf.v5.';
 
 let compteur = 0;
 export function nouvelId(prefixe: string) {

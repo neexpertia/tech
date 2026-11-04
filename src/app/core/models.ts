@@ -45,12 +45,18 @@ export interface Produit {
 
 // ---------------------------------------------------------------- Comptes
 
+/**
+ * Deux profils pour les utilisateurs : « acheteur » (profil de départ) et « vendeur »
+ * (un acheteur qui a activé la vente ; il garde tout ce que fait un acheteur).
+ * Les autres valeurs sont conservées pour les outils internes et les données historiques.
+ */
 export type Role =
+  | 'acheteur' | 'vendeur'
   | 'producteur' | 'cooperative' | 'acheteur' | 'transporteur' | 'entrepot' | 'collecteur' | 'institution'
   | 'admin'; // administrateur interne de la plateforme (pas un acteur)
 
 /** Métier de l'acheteur (information, pas un rôle distinct). */
-export type CategorieAcheteur = 'Grossiste / commerçant' | 'Transformateur' | 'Hôtel / restaurant' | 'Exportateur' | 'Supermarché / distributeur';
+export type CategorieAcheteur = 'Particulier / ménage' | 'Grossiste / commerçant' | 'Transformateur' | 'Hôtel / restaurant' | 'Exportateur' | 'Supermarché / distributeur';
 
 export type StatutKyc = 'en_attente' | 'verifie' | 'rejete';
 
@@ -68,9 +74,21 @@ export interface Utilisateur {
   membres?: number; // coopératives
   categorie?: CategorieAcheteur; // acheteurs
   capaciteT?: number; // transporteurs (charge utile)
+  /** Date à laquelle un acheteur est devenu vendeur (« Devenir vendeur »). */
+  vendeurDepuis?: DateISO;
+  /** Ce que vend le vendeur : ses propres récoltes, celles d'une coopérative, ou du négoce */
+  typeVendeur?: 'producteur' | 'cooperative' | 'commercant';
+  /** Produits que le vendeur déclare produire / commercialiser. */
+  produitsVendus?: ID[];
 }
 
-export interface Avis { id: ID; commandeId: ID; auteurId: ID; cibleId: ID; note: 1 | 2 | 3 | 4 | 5; commentaire: string; date: DateISO }
+export interface Avis {
+  id: ID; commandeId: ID; auteurId: ID; cibleId: ID; note: 1 | 2 | 3 | 4 | 5; commentaire: string; date: DateISO;
+  /** Avis sur le produit acheté (achat vérifié : uniquement après une commande reçue). */
+  offreId?: ID;
+  produitId?: ID;
+  achatVerifie?: boolean;
+}
 
 // ---------------------------------------------------------------- Prix
 
@@ -107,6 +125,8 @@ export interface Offre {
   livraison: boolean;
   statut: 'active' | 'epuisee' | 'retiree';
   creeLe: DateISO;
+  /** Dernière confirmation du stock par le vendeur (fraîcheur de l'offre). */
+  stockConfirmeLe?: DateISO;
 }
 
 export interface Demande {
@@ -139,6 +159,7 @@ export interface Cotation {
 }
 
 export type StatutCommande =
+  | 'attente_confirmation' // le vendeur doit confirmer la disponibilité (24 h)
   | 'attente_paiement' | 'sequestre' | 'expediee' | 'livree' | 'terminee' | 'litige' | 'annulee';
 
 export type Operateur = 'Orange Money' | 'Moov Money' | 'Sank Money' | 'Virement bancaire';
@@ -163,6 +184,31 @@ export interface Commande {
   messages: { date: DateISO; auteurId: ID; texte: string }[];
   litige?: { motif: string; description: string; ouvertLe: DateISO; resolution?: string };
   creeLe: DateISO;
+  /** Échéance de confirmation de disponibilité par le vendeur (ISO date-heure). */
+  confirmationAvant?: string;
+  /** Échéance d'expédition après paiement (ISO date-heure) : au-delà, l'acheteur peut annuler et être remboursé. */
+  expeditionAvant?: string;
+  /** Code à 4 chiffres remis par l'acheteur au chauffeur à la réception. */
+  codeRemise?: string;
+  livraison?: Livraison;
+  /** Commande émise depuis le panier ou une proposition négociée dans la messagerie */
+  origineAchat?: 'panier' | 'direct' | 'negociation' | 'cotation';
+}
+
+export type ModeLivraison = 'transporteur' | 'car' | 'vendeur' | 'enlevement';
+
+/** Organisation et suivi de la livraison (renseignés par le vendeur après accord avec le chauffeur). */
+export interface Livraison {
+  mode: ModeLivraison;
+  transporteur?: string; // compagnie / propriétaire du véhicule
+  chauffeur?: string;
+  telephoneChauffeur?: string;
+  vehicule?: string; // immatriculation, type
+  departPrevu?: string; // ISO date-heure
+  arriveePrevue?: string; // ISO date-heure
+  /** Lieu précis de remise dans la ville de destination */
+  pointRemise?: string;
+  etapes: { date: string; texte: string; lieu?: string; auteurId: ID }[];
 }
 
 // ---------------------------------------------------------------- Transport
@@ -278,7 +324,71 @@ export interface Lot {
   creeLe: DateISO;
 }
 
-export interface Notification { id: ID; userId: ID; date: DateISO; texte: string; lien?: string; lu: boolean }
+export type TypeNotification = 'commande' | 'livraison' | 'paiement' | 'message' | 'favori' | 'alerte' | 'compte' | 'autre';
+export interface Notification { id: ID; userId: ID; date: DateISO; texte: string; lien?: string; lu: boolean; type?: TypeNotification }
+
+// ---------------------------------------------------------------- Espace acheteur
+
+export interface Favori { id: ID; userId: ID; offreId: ID; prixKgAjout: number; creeLe: DateISO }
+
+/** Alerte produit : « préviens-moi quand une offre correspond ». */
+export interface AlerteProduit {
+  id: ID;
+  userId: ID;
+  produitId: ID;
+  prixMaxKg?: number;
+  qualiteMin?: Qualite;
+  /** Rayon autour de la localité de livraison (km) ; vide = tout le pays */
+  rayonKm?: number;
+  localiteId: ID;
+  active: boolean;
+  creeLe: DateISO;
+}
+
+export interface LignePanier { id: ID; userId: ID; offreId: ID; quantiteKg: number; ajouteLe: DateISO }
+
+export type TypeMessage = 'texte' | 'question_dispo' | 'reponse_dispo' | 'proposition' | 'systeme';
+
+export interface MessageConv {
+  id: string;
+  date: string; // ISO date-heure
+  auteurId: ID;
+  type: TypeMessage;
+  texte: string;
+  /** reponse_dispo */
+  disponible?: boolean;
+  /** proposition de prix négociée par le vendeur (ou contre-proposition de l'acheteur) */
+  proposition?: { prixKg: number; quantiteKg: number; statut: 'en_attente' | 'acceptee' | 'refusee'; commandeId?: ID };
+}
+
+/** Discussion acheteur ↔ vendeur à propos d'une offre (avant ou après l'achat). */
+export interface Conversation {
+  id: ID;
+  offreId: ID;
+  produitId: ID;
+  acheteurId: ID;
+  vendeurId: ID;
+  messages: MessageConv[];
+  nonLusAcheteur: number;
+  nonLusVendeur: number;
+  majLe: string;
+  creeLe: DateISO;
+}
+
+export type CategorieActu = 'Prix' | 'Saison' | 'Routes' | 'Marché' | 'Conseil' | 'Plateforme';
+
+/** Actualité éditoriale (publiée par l'équipe) ; les actualités calculées sont générées à la volée. */
+export interface Actualite {
+  id: ID;
+  titre: string;
+  resume: string;
+  categorie: CategorieActu;
+  produitIds: ID[];
+  regionIds: ID[];
+  date: DateISO;
+  source: string;
+  lien?: string;
+}
 
 // ---------------------------------------------------------------- Collection besoins_v1
 

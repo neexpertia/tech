@@ -1,12 +1,12 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MARCHES, produit } from '../core/data/referentiel';
+import { MARCHES, PRODUITS, produit } from '../core/data/referentiel';
 import { LIBELLE_STATUT, PlateformeService, aujourdhui } from '../core/plateforme.service';
 import { SessionService } from '../core/session.service';
 import { UI } from '../shared/ui';
 
-const PRODUITS_USSD = ['mais', 'sorgho', 'mil', 'riz', 'niebe', 'sesame', 'oignon', 'arachide'];
-const MARCHES_USSD = ['OUA', 'BOB', 'KDG', 'OHG', 'KAY', 'FAD', 'DED', 'SLN'];
+const PRODUITS_USSD = ['mais', 'sorgho', 'mil', 'riz', 'niebe', 'sesame', 'oignon', 'arachide', 'soja'].filter((id) => PRODUITS.some((p) => p.id === id));
+const MARCHES_USSD = ['OUA', 'BOB', 'KDG', 'OHG', 'KAY', 'FAD', 'DED', 'SLN', 'LEO'];
 const ACCUEIL = 'FasoAgri\n1. Prix du marché\n2. Vendre ma récolte\n3. Mes commandes\n4. État des routes\n5. Mon score\n0. Quitter';
 
 /**

@@ -178,10 +178,16 @@ export class EnUnitePipe implements PipeTransform {
 @Component({
   selector: 'app-etoiles',
   template: `<span class="et" [attr.aria-label]="note() + ' sur 5'">@for (i of [1, 2, 3, 4, 5]; track i) {<span [class.on]="note() >= i - 0.25">★</span>}</span>`,
-  styles: `.et { color: var(--border); letter-spacing: 1px; } .on { color: #e0a100; }`,
+  styles: `.et { color: var(--border); letter-spacing: 1px; } .on { color: var(--vert); }`,
 })
 export class EtoilesComponent {
   readonly note = input.required<number>();
 }
 
-export const UI = [FcfaPipe, QtePipe, NbPipe, NiveauComponent, CourbeComponent, BarresComponent, LocPipe, ProdPipe, QuiPipe, EnUnitePipe, EtoilesComponent];
+/** Qualité A/B/C en mots simples */
+@Pipe({ name: 'qualite' })
+export class QualitePipe implements PipeTransform {
+  transform(q: string | undefined): string { return q === 'A' ? 'Premier choix' : q === 'B' ? 'Bonne qualité' : q === 'C' ? 'Qualité courante' : '—'; }
+}
+
+export const UI = [QualitePipe, FcfaPipe, QtePipe, NbPipe, NiveauComponent, CourbeComponent, BarresComponent, LocPipe, ProdPipe, QuiPipe, EnUnitePipe, EtoilesComponent];
